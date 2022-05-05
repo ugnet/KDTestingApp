@@ -10,6 +10,15 @@ import {
 import { Picker } from "@react-native-picker/picker";
 
 export default function RegisterTester() {
+  const data = [
+    {
+      label: "data 1",
+    },
+    {
+      label: "data 2",
+    },
+  ];
+
   return (
     <>
       <View style={styles.profileContainer}>
@@ -17,7 +26,6 @@ export default function RegisterTester() {
           style={{
             color: "#ffffff",
             alignContent: "center",
-            // margin: "10%",
             fontSize: 18,
           }}
         >
@@ -39,7 +47,6 @@ export default function RegisterTester() {
         <TextInput style={styles.input} placeholder="M/F*" />
         <TextInput style={styles.input} placeholder="M/F*" />
       </ScrollView>
-      <ScrollView style={styles.list}></ScrollView>
     </>
   );
 }

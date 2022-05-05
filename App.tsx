@@ -12,10 +12,13 @@ import {
 import { useTailwind } from "tailwind-rn";
 import { TailwindProvider } from "tailwind-rn";
 import PinCircle from "./components/PinCircle";
+import AddCombinationScreen from "./screens/AddCombinationScreen";
+import CombinationScreen from "./screens/CombinationScreen";
 import PinInputScreen from "./screens/PinInputScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import RegisterTester from "./screens/RegisterTester";
 import TestersScreen from "./screens/TestersScreen";
+import TestingResultScreen from "./screens/TestingResultScreen";
 import utilities from "./tailwind.json";
 
 export default function App() {
@@ -32,7 +35,7 @@ export default function App() {
   return (
     <TailwindProvider utilities={utilities}>
       <SafeAreaView style={styles.container}>
-        <RegisterTester />
+        <CombinationScreen />
         {/* <TestersScreen /> */}
       </SafeAreaView>
     </TailwindProvider>
