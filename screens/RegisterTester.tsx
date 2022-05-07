@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
@@ -55,80 +56,88 @@ export default function RegisterTester({ navigation }: Props) {
 
   return (
     <>
-      <View style={styles.profileContainer}>
-        <Text
-          style={{
-            color: "#ffffff",
-            alignContent: "center",
-            fontSize: 18,
-          }}
-        >
-          Register new tester
-        </Text>
-      </View>
-
-      {/* <Text style={[styles.text2]}>Trained combinations</Text> */}
-      <ScrollView style={styles.list}>
-        <Text style={[styles.greyText, { marginHorizontal: "5%" }]}>
-          Please fill in your information
-        </Text>
-
-        {error ? (
-          <Text style={[styles.errorText, { marginHorizontal: "5%" }]}>
-            Incorrect format
-          </Text>
-        ) : null}
-
-        <Text style={styles.text2}>Username</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="username"
-          value={username}
-          onChangeText={onChangeUsername}
-        />
-
-        <Text style={styles.text2}>Age</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="age"
-          keyboardType="numeric"
-          value={age}
-          onChangeText={onChangeAge}
-        />
-
-        <Text style={styles.text2}>Gender (male/female/other)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="M/F/O"
-          value={gender}
-          onChangeText={onChangeGender}
-        />
-
-        <Text style={styles.text2}>Hand prefference (right/left)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="R/L"
-          value={hand}
-          onChangeText={onChangeHand}
-        />
-        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+      <SafeAreaView style={{ flex: 0, backgroundColor: "#67718a" }} />
+      <View style={styles.container}>
+        <View style={styles.profileContainer}>
           <Text
             style={{
               color: "#ffffff",
               alignContent: "center",
-              margin: "10%",
-              fontSize: 14,
+              fontSize: 18,
             }}
           >
-            Register
+            Register new tester
           </Text>
-        </TouchableOpacity>
-      </ScrollView>
+        </View>
+
+        {/* <Text style={[styles.text2]}>Trained combinations</Text> */}
+        <ScrollView style={styles.list}>
+          <Text style={[styles.greyText, { marginHorizontal: "5%" }]}>
+            Please fill in your information
+          </Text>
+
+          {error ? (
+            <Text style={[styles.errorText, { marginHorizontal: "5%" }]}>
+              Incorrect format
+            </Text>
+          ) : null}
+
+          <Text style={styles.text2}>Username</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="username"
+            value={username}
+            onChangeText={onChangeUsername}
+          />
+
+          <Text style={styles.text2}>Age</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="age"
+            keyboardType="numeric"
+            value={age}
+            onChangeText={onChangeAge}
+          />
+
+          <Text style={styles.text2}>Gender (male/female/other)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="M/F/O"
+            value={gender}
+            onChangeText={onChangeGender}
+          />
+
+          <Text style={styles.text2}>Hand prefference (right/left)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="R/L"
+            value={hand}
+            onChangeText={onChangeHand}
+          />
+          <TouchableOpacity style={styles.button} onPress={handleRegister}>
+            <Text
+              style={{
+                color: "#ffffff",
+                alignContent: "center",
+                margin: "10%",
+                fontSize: 14,
+              }}
+            >
+              Register
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#eef1f7",
+    alignItems: "center",
+  },
   input: {
     borderWidth: 1,
     height: 40,

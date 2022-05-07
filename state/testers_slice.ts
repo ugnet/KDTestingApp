@@ -34,7 +34,7 @@ export interface Tester {
   id: number;
   username: string;
   age: string;
-  gender?: string;
+  gender: string;
   combinations: Array<Combination>;
 }
 
@@ -45,6 +45,7 @@ const initialState: Testers = [
     id: 1,
     username: "tester 1",
     age: "23",
+    gender: "M",
     combinations: [
       {
         id: 1,
@@ -80,6 +81,7 @@ const initialState: Testers = [
     id: 2,
     username: "tester 2",
     age: "24",
+    gender: "F",
     combinations: [],
   },
 ];

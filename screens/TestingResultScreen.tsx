@@ -39,10 +39,10 @@ export default function TestingResultScreen({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 40,
     alignItems: "center",
     alignContent: "center",
-    marginTop: "60%",
+    paddingTop: "60%",
+    backgroundColor: "#eef1f7",
   },
   text: {
     fontSize: 24,

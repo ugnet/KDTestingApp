@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
   Picker,
+  SafeAreaView,
 } from "react-native";
 import { RootStackParamList } from "../App";
 import RadioButton from "../components/RadioButton";
@@ -40,6 +41,7 @@ export default function CombinationScreen({ route, navigation }: Props) {
 
   return (
     <>
+      <SafeAreaView style={{ flex: 0, backgroundColor: "#67718a" }} />
       <View style={styles.profileContainer}>
         <Text
           style={{
@@ -177,7 +179,7 @@ const styles = StyleSheet.create({
   list: {
     height: "100%",
     width: "100%",
-    backgroundColor: "rgba(149, 154, 173, 0.1)",
+    backgroundColor: "#eef1f7",
     paddingVertical: "10%",
   },
   listItem: {

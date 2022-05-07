@@ -1,12 +1,13 @@
-import { NavigationHelpers, ParamListBase } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState } from "react";
+import React from "react";
 import {
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  Image,
 } from "react-native";
 import { RootStackParamList } from "../App";
 import { useAppSelector } from "../state/hooks";
@@ -35,15 +36,19 @@ export default function ProfileScreen({ route, navigation }: Props) {
 
   return (
     <>
+      <SafeAreaView style={{ flex: 0, backgroundColor: "#67718a" }} />
       <View style={styles.profileContainer}>
+        <Image
+          source={require("../assets/Profile_2.png")}
+          style={styles.image}
+        />
         <Text style={styles.textWhite}>{tester?.username}</Text>
         <Text style={styles.textGrey}>
           {tester?.age +
             " age ◦ " +
             tester?.combinations.length +
             " combinations ◦ " +
-            tester?.id +
-            "#"}
+            tester?.gender}
         </Text>
         <TouchableOpacity style={styles.button} onPress={addCombination}>
           <Text
@@ -59,17 +64,34 @@ export default function ProfileScreen({ route, navigation }: Props) {
         </TouchableOpacity>
       </View>
 
-      <Text style={[styles.text2]}>Trained combinations</Text>
-      <ScrollView style={styles.list}>
-        {tester?.combinations.map((combination) => (
-          <TouchableOpacity
-            style={styles.listItem}
-            onPress={showCombination(combination.id)}
-          >
-            <Text style={styles.text}>{combination.title}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      <View style={styles.container}>
+        <Text style={[styles.text2]}>Trained combinations</Text>
+        <ScrollView style={styles.list}>
+          {tester?.combinations.map((combination) => (
+            <TouchableOpacity
+              style={styles.listItem}
+              onPress={showCombination(combination.id)}
+            >
+              <Image
+                source={require("../assets/Cube.png")}
+                style={styles.cube}
+              />
+              <View>
+                <Text style={styles.text}>{combination.title}</Text>
+                <Text style={styles.text3}>
+                  {combination.numberOfTrainingSteps +
+                    " steps ◦ " +
+                    combination.pinLength +
+                    " pin length  ◦ " +
+                    (combination.genuineTests.length +
+                      combination.impostorTests.length) +
+                    " tests"}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
     </>
   );
 }
@@ -77,26 +99,37 @@ export default function ProfileScreen({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   profileContainer: {
     backgroundColor: "#67718a",
-    height: "30%",
+    height: "38%",
     width: "100%",
     alignItems: "center",
     justifyContent: "space-evenly",
     paddingVertical: "10%",
   },
+  image: {
+    height: 80,
+    width: 80,
+  },
+  cube: {
+    height: 30,
+    width: 30,
+    marginRight: "5%",
+  },
+  container: {
+    backgroundColor: "#eef1f7",
+  },
   list: {
     height: "60%",
     width: "100%",
-    backgroundColor: "rgba(149, 154, 173, 0.1)",
-    // backgroundColor: "red",
+    backgroundColor: "#eef1f7",
   },
   listItem: {
     height: 70,
     width: "100%",
-    backgroundColor: "#eef1f7",
+    backgroundColor: "#ffffff",
     flexDirection: "row",
     alignItems: "center",
-    borderTopColor: "rgba(149, 154, 173, 0.4)",
-    borderTopWidth: 1,
+    borderTopColor: "#eef1f7",
+    borderTopWidth: 2,
     paddingHorizontal: "5%",
   },
   textWhite: {
@@ -116,8 +149,13 @@ const styles = StyleSheet.create({
     borderBottomColor: "#67718a",
     borderBottomWidth: 1,
   },
+  text3: {
+    fontSize: 12,
+    color: "rgba(149, 154, 173, 1)",
+    alignSelf: "flex-start",
+  },
   textGrey: {
-    fontSize: 20,
+    fontSize: 16,
     color: "#ffffff",
     opacity: 0.6,
   },
@@ -126,5 +164,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(149, 154, 173, 1)",
     borderRadius: 100,
     alignItems: "center",
+    marginTop: 20,
   },
 });
