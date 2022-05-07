@@ -69,7 +69,7 @@ const initialState: Testers = [
           {
             testedAs: "impostor",
             authenticateAs: "impostor",
-            authentication: "fail",
+            authentication: "success",
             date: "2022-01-01",
             id: 2,
           },

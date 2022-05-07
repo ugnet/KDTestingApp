@@ -4,11 +4,10 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
-  Picker,
   SafeAreaView,
+  Image,
 } from "react-native";
 import { RootStackParamList } from "../App";
 import RadioButton from "../components/RadioButton";
@@ -87,24 +86,44 @@ export default function CombinationScreen({ route, navigation }: Props) {
           <>
             {combination?.genuineTests.map((test) => (
               <View style={styles.listItem}>
-                <Text style={styles.text3}>Tested as: {test.testedAs}</Text>
-                <Text style={styles.text3}>
-                  Authenticated as: {test.authenticateAs}
-                </Text>
-                <Text style={[styles.text3, { color: "#67718a" }]}>
-                  {test.authentication} ◦ {test.date} ◦ {test.id}
-                </Text>
+                <View>
+                  <Text style={styles.text3}>Tested as: {test.testedAs}</Text>
+                  <Text style={[styles.text3, { marginVertical: 3 }]}>
+                    Authenticated as: {test.authenticateAs}
+                  </Text>
+                  <Text style={[styles.text3, { color: "#67718a" }]}>
+                    {test.authentication} ◦ {test.date} ◦ {test.id}
+                  </Text>
+                </View>
+                <Image
+                  source={
+                    test.authentication === "fail"
+                      ? require("../assets/Test_red.png")
+                      : require("../assets/Test_green.png")
+                  }
+                  style={styles.image}
+                />
               </View>
             ))}
             {combination?.impostorTests.map((test) => (
               <View style={styles.listItem}>
-                <Text style={styles.text3}>Tested as: {test.testedAs}</Text>
-                <Text style={styles.text3}>
-                  Authenticated as: {test.authenticateAs}
-                </Text>
-                <Text style={[styles.text3, { color: "#67718a" }]}>
-                  {test.authentication} ◦ {test.date} ◦ {test.id}
-                </Text>
+                <View>
+                  <Text style={styles.text3}>Tested as: {test.testedAs}</Text>
+                  <Text style={[styles.text3, { marginVertical: 3 }]}>
+                    Authenticated as: {test.authenticateAs}
+                  </Text>
+                  <Text style={[styles.text3, { color: "#67718a" }]}>
+                    {test.authentication} ◦ {test.date} ◦ {test.id}
+                  </Text>
+                </View>
+                <Image
+                  source={
+                    test.authentication === "fail"
+                      ? require("../assets/Test_red.png")
+                      : require("../assets/Test_green.png")
+                  }
+                  style={styles.image}
+                />
               </View>
             ))}
           </>
@@ -152,6 +171,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#eef1f7",
   },
+  image: { height: 35, width: 35, marginRight: "3%" },
   input: {
     borderWidth: 1,
     height: 40,
@@ -183,14 +203,16 @@ const styles = StyleSheet.create({
     paddingVertical: "10%",
   },
   listItem: {
-    height: 90,
+    height: 100,
     backgroundColor: "#ffffff",
-    flexDirection: "column",
+    flexDirection: "row",
     borderRadius: 12,
     marginTop: 10,
     marginHorizontal: "5%",
-    justifyContent: "space-evenly",
     paddingVertical: 10,
+    paddingHorizontal: "5%",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   text: {
     fontSize: 20,
