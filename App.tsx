@@ -14,7 +14,11 @@ import { store } from "./state/store";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Tester } from "./state/testers_slice";
+import {
+  AuthenticationStatus,
+  Tester,
+  TesterType,
+} from "./state/testers_slice";
 
 export type RootStackParamList = {
   Register: undefined;
@@ -23,6 +27,11 @@ export type RootStackParamList = {
   AddCombination: { testerId: number };
   Combination: { tester: Tester; combinationId: number };
   PinInput: { testerId: number; combinationId: number; phase: PhaseType };
+  TestingResult: {
+    authenticatedAs: TesterType;
+    testedAs: TesterType;
+    status: AuthenticationStatus;
+  };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -43,11 +52,7 @@ function MyStack() {
       <Stack.Screen name="Register" component={RegisterTester} />
       <Stack.Screen name="AddCombination" component={AddCombinationScreen} />
       <Stack.Screen name="PinInput" component={PinInputScreen} />
-      {/* 
-      
-      <Stack.Screen name="Combination" component={CombinationScreen} />
       <Stack.Screen name="TestingResult" component={TestingResultScreen} />
-      */}
     </Stack.Navigator>
   );
 }

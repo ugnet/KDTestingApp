@@ -22,6 +22,22 @@ export default function CombinationScreen({ route, navigation }: Props) {
     (c) => c.id === route.params.combinationId
   );
 
+  const handleTestGenuine = () => {
+    navigation.navigate("PinInput", {
+      testerId: route.params.tester.id,
+      combinationId: route.params.combinationId,
+      phase: "testingGenuine",
+    });
+  };
+
+  const handleTestImpostor = () => {
+    navigation.navigate("PinInput", {
+      testerId: route.params.tester.id,
+      combinationId: route.params.combinationId,
+      phase: "testingImpostor",
+    });
+  };
+
   return (
     <>
       <View style={styles.profileContainer}>
@@ -97,7 +113,7 @@ export default function CombinationScreen({ route, navigation }: Props) {
         )}
 
         <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={handleTestGenuine}>
             <Text
               style={{
                 color: "#ffffff",
@@ -109,7 +125,7 @@ export default function CombinationScreen({ route, navigation }: Props) {
               Test as genuine user
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button} onPress={handleTestImpostor}>
             <Text
               style={{
                 color: "#ffffff",
@@ -132,6 +148,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 40,
     alignItems: "center",
+    backgroundColor: "#eef1f7",
   },
   input: {
     borderWidth: 1,

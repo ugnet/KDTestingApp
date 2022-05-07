@@ -1,14 +1,26 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React from "react";
 import { TouchableOpacity, View, StyleSheet, Text } from "react-native";
+import { RootStackParamList } from "../App";
 
-export default function TestingResultScreen() {
+type Props = NativeStackScreenProps<RootStackParamList, "TestingResult">;
+
+export default function TestingResultScreen({ route, navigation }: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Test complete</Text>
-      <Text style={styles.greyText}>Tested as impostor</Text>
-      <Text style={styles.greyText}>Authenticated as impostor</Text>
-      <Text style={styles.greenText}>Authentication successfull</Text>
-      <TouchableOpacity>
+      <Text style={styles.greyText}>Tested as {route.params.testedAs}</Text>
+      <Text style={styles.greyText}>
+        Authenticated as {route.params.authenticatedAs}
+      </Text>
+
+      {route.params.testedAs === route.params.authenticatedAs ? (
+        <Text style={styles.greenText}>Authentication succesfull</Text>
+      ) : (
+        <Text style={styles.redText}>Authentication unsuccessfull</Text>
+      )}
+
+      <TouchableOpacity onPress={() => navigation.pop(2)}>
         <Text
           style={{
             color: "#687089",

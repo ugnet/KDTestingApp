@@ -96,8 +96,22 @@ const testersSlice = createSlice({
         .find((tester) => tester.id === action.payload.testerId)
         ?.combinations.push(action.payload);
     },
+    modifyCombinationPin(state, action: PayloadAction<Combination>) {
+      const tester = state.find(
+        (tester) => tester.id == action.payload.testerId
+      );
+      if (tester) {
+        const combination = tester.combinations.find(
+          (c) => c.id == action.payload.id
+        );
+        if (combination) {
+          combination.pinCode = action.payload.pinCode;
+        }
+      }
+    },
   },
 });
 
-export const { addTester, addCombination } = testersSlice.actions;
+export const { addTester, addCombination, modifyCombinationPin } =
+  testersSlice.actions;
 export default testersSlice.reducer;
