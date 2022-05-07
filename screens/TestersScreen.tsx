@@ -1,43 +1,64 @@
 import React, { useState } from "react";
 import {
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import Icon from "../components/Icon";
+
+import { useAppDispatch, useAppSelector } from "../state/hooks";
 
 export default function TestersScreen() {
+  const testers = useAppSelector((state) => state.testers);
+
+  console.log(testers);
   return (
     <>
-      <View style={styles.profileContainer}>
-        <Text
-          style={{
-            color: "#ffffff",
-            alignContent: "center",
-            // margin: "10%",
-            fontSize: 18,
-          }}
-        >
-          Registered testers
-        </Text>
-      </View>
-      {/* <Text style={[styles.text2]}>Trained combinations</Text> */}
-      <ScrollView style={styles.list}>
-        <TouchableOpacity style={styles.listItem}>
-          <Text style={styles.text}>Tester 1</Text>
-          <Text style={styles.text2}>3 combination</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.listItem}>
-          <Text style={styles.text}>Tester 2</Text>
-          <Text style={styles.text2}>15 combination</Text>
-        </TouchableOpacity>
-      </ScrollView>
+      {/* <SafeAreaView style={{ flex: 0, backgroundColor: "#67718a" }} /> */}
+      <SafeAreaView style={styles.container}>
+        <View style={styles.profileContainer}>
+          <Text
+            style={{
+              color: "#ffffff",
+              alignContent: "center",
+              fontSize: 18,
+            }}
+          >
+            Registered testers
+          </Text>
+        </View>
+        <ScrollView style={styles.list}>
+          {testers.map((tester) => (
+            <TouchableOpacity
+              key={tester.username}
+              style={styles.listItem}
+              onPress={() => {}}
+            >
+              <Text style={styles.text}>{tester.username}</Text>
+              <Text style={styles.text2}>
+                {tester.age +
+                  " age ◦ " +
+                  tester.combinations.length +
+                  " combinations"}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </SafeAreaView>
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#eef1f7",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
   profileContainer: {
     backgroundColor: "#67718a",
     height: "8%",
@@ -54,22 +75,22 @@ const styles = StyleSheet.create({
   listItem: {
     height: 70,
     width: "100%",
-    backgroundColor: "#eef1f7",
-    flexDirection: "row",
     alignItems: "center",
-    borderTopColor: "rgba(149, 154, 173, 0.1)",
-    borderTopWidth: 8,
+    justifyContent: "space-evenly",
+    backgroundColor: "#ffffff",
+    flexDirection: "column",
+    marginTop: 10,
+    paddingVertical: 10,
+    paddingHorizontal: "20%",
   },
   text: {
     fontSize: 20,
-    marginLeft: 30,
+    alignSelf: "flex-start",
   },
   text2: {
     fontSize: 14,
-    marginLeft: 30,
-    paddingVertical: 15,
-    borderBottomWidth: 1,
     color: "rgba(149, 154, 173, 1)",
+    alignSelf: "flex-start",
   },
   button: {
     width: "50%",

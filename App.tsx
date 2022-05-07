@@ -1,17 +1,5 @@
-import React, { useState } from "react";
-import {
-  ListView,
-  SafeAreaView,
-  ScrollView,
-  ScrollViewComponent,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { useTailwind } from "tailwind-rn";
-import { TailwindProvider } from "tailwind-rn";
-import PinCircle from "./components/PinCircle";
+import React from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
 import AddCombinationScreen from "./screens/AddCombinationScreen";
 import CombinationScreen from "./screens/CombinationScreen";
 import PinInputScreen from "./screens/PinInputScreen";
@@ -19,26 +7,40 @@ import ProfileScreen from "./screens/ProfileScreen";
 import RegisterTester from "./screens/RegisterTester";
 import TestersScreen from "./screens/TestersScreen";
 import TestingResultScreen from "./screens/TestingResultScreen";
-import utilities from "./tailwind.json";
+
+import { Provider } from "react-redux";
+import { store } from "./state/store";
+
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+const Stack = createNativeStackNavigator();
+
+function MyStack() {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="Testers" component={TestersScreen} />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Register" component={RegisterTester} />
+      <Stack.Screen name="PinInput" component={PinInputScreen} />
+      <Stack.Screen name="Combination" component={CombinationScreen} />
+      <Stack.Screen name="TestingResult" component={TestingResultScreen} />
+      <Stack.Screen name="AddCombination" component={AddCombinationScreen} />
+    </Stack.Navigator>
+  );
+}
 
 export default function App() {
-  const tailwind = useTailwind();
-
-  const [passcode, setPasscode] = useState("");
-
-  const enterSymbol = (key: string) => () => {
-    setPasscode(passcode + key);
-  };
-
-  const INPUT_LENGTH = 6;
-
   return (
-    <TailwindProvider utilities={utilities}>
-      <SafeAreaView style={styles.container}>
-        <CombinationScreen />
-        {/* <TestersScreen /> */}
-      </SafeAreaView>
-    </TailwindProvider>
+    <Provider store={store}>
+      <NavigationContainer>
+        <MyStack />
+      </NavigationContainer>
+    </Provider>
   );
 }
 
@@ -58,11 +60,9 @@ const styles = StyleSheet.create({
   navigationButton: {
     width: "50%",
     height: "100%",
-    // backgroundColor: "red",
     justifyContent: "space-evenly",
     alignItems: "center",
   },
-  //NUO CIA
 });
 
 const state = {
