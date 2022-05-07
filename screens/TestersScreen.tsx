@@ -1,3 +1,4 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import {
   SafeAreaView,
@@ -7,14 +8,26 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { RootStackParamList } from "../App";
 import Icon from "../components/Icon";
 
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 
-export default function TestersScreen() {
+type Props = NativeStackScreenProps<RootStackParamList, "Testers">;
+
+export default function TestersScreen({ navigation }: Props) {
   const testers = useAppSelector((state) => state.testers);
 
-  console.log(testers);
+  const navigateToProfile = (id: number) => () => {
+    navigation.navigate("Profile", {
+      testerId: id,
+    });
+  };
+
+  const registerNewTester = () => {
+    navigation.navigate("Register");
+  };
+
   return (
     <>
       {/* <SafeAreaView style={{ flex: 0, backgroundColor: "#67718a" }} /> */}
@@ -35,7 +48,7 @@ export default function TestersScreen() {
             <TouchableOpacity
               key={tester.username}
               style={styles.listItem}
-              onPress={() => {}}
+              onPress={navigateToProfile(tester.id)}
             >
               <Text style={styles.text}>{tester.username}</Text>
               <Text style={styles.text2}>
@@ -46,6 +59,18 @@ export default function TestersScreen() {
               </Text>
             </TouchableOpacity>
           ))}
+          <TouchableOpacity style={styles.button} onPress={registerNewTester}>
+            <Text
+              style={{
+                color: "#ffffff",
+                alignContent: "center",
+                margin: "10%",
+                fontSize: 14,
+              }}
+            >
+              Register new tester
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
     </>
@@ -55,7 +80,7 @@ export default function TestersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#eef1f7",
+    backgroundColor: "rgba(149, 154, 173, 0.1)",
     alignItems: "center",
     justifyContent: "flex-end",
   },
@@ -97,5 +122,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(149, 154, 173, 1)",
     borderRadius: 100,
     alignItems: "center",
+    alignContent: "center",
+    alignSelf: "center",
+    marginTop: "10%",
   },
 });

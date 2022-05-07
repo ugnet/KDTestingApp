@@ -7,17 +7,51 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { useAppDispatch, useAppSelector } from "../state/hooks";
+import { addTester, Tester } from "../state/testers_slice";
+import { RootStackParamList } from "../App";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-export default function RegisterTester() {
-  const data = [
-    {
-      label: "data 1",
-    },
-    {
-      label: "data 2",
-    },
-  ];
+type Props = NativeStackScreenProps<RootStackParamList, "Register">;
+
+export default function RegisterTester({ navigation }: Props) {
+  const [username, onChangeUsername] = React.useState("");
+  const [age, onChangeAge] = React.useState("");
+  const [gender, onChangeGender] = React.useState("");
+  const [hand, onChangeHand] = React.useState("");
+
+  const handRegex = /^[RrlL]*$/;
+  const genderRegex = /^[OoMmFf]*$/;
+
+  const [error, setError] = React.useState(false);
+
+  const testers = useAppSelector((state) => state.testers);
+
+  const dispatch = useAppDispatch();
+
+  const handleRegister = () => {
+    if (
+      !username ||
+      !age ||
+      !gender ||
+      !hand ||
+      !handRegex.test(hand) ||
+      !genderRegex.test(gender)
+    )
+      return setError(true);
+
+    const tester: Tester = {
+      id: testers.length + 1,
+      username: username,
+      age: age,
+      gender: gender,
+      combinations: [],
+    };
+
+    dispatch(addTester(tester));
+
+    navigation.navigate("Testers");
+  };
 
   return (
     <>
@@ -38,14 +72,57 @@ export default function RegisterTester() {
         <Text style={[styles.greyText, { marginHorizontal: "5%" }]}>
           Please fill in your information
         </Text>
-        <TextInput style={styles.input} placeholder="Name*" />
+
+        {error ? (
+          <Text style={[styles.errorText, { marginHorizontal: "5%" }]}>
+            Incorrect format
+          </Text>
+        ) : null}
+
+        <Text style={styles.text2}>Username</Text>
         <TextInput
           style={styles.input}
-          placeholder="Age*"
-          keyboardType="numeric"
+          placeholder="username"
+          value={username}
+          onChangeText={onChangeUsername}
         />
-        <TextInput style={styles.input} placeholder="M/F*" />
-        <TextInput style={styles.input} placeholder="M/F*" />
+
+        <Text style={styles.text2}>Age</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="age"
+          keyboardType="numeric"
+          value={age}
+          onChangeText={onChangeAge}
+        />
+
+        <Text style={styles.text2}>Gender (male/female/other)</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="M/F/O"
+          value={gender}
+          onChangeText={onChangeGender}
+        />
+
+        <Text style={styles.text2}>Hand prefference (right/left)</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="R/L"
+          value={hand}
+          onChangeText={onChangeHand}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+          <Text
+            style={{
+              color: "#ffffff",
+              alignContent: "center",
+              margin: "10%",
+              fontSize: 14,
+            }}
+          >
+            Register
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     </>
   );
@@ -60,7 +137,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(149, 154, 173, 0.5)",
     backgroundColor: "#ffffff",
     paddingHorizontal: "2%",
-    marginTop: "5%",
+    marginTop: "2%",
   },
   greyText: {
     fontSize: 17,
@@ -97,15 +174,26 @@ const styles = StyleSheet.create({
   },
   text2: {
     fontSize: 14,
-    marginLeft: 30,
-    paddingVertical: 15,
-    borderBottomWidth: 1,
     color: "rgba(149, 154, 173, 1)",
+    alignSelf: "flex-start",
+    marginHorizontal: "5%",
+    marginTop: "4%",
   },
   button: {
     width: "50%",
     backgroundColor: "rgba(149, 154, 173, 1)",
     borderRadius: 100,
     alignItems: "center",
+    alignContent: "center",
+    alignSelf: "center",
+    marginTop: "10%",
+  },
+  errorText: {
+    fontSize: 14,
+    fontWeight: "400",
+    textAlign: "center",
+    color: "#fa7470",
+    opacity: 0.65,
+    marginVertical: 4,
   },
 });

@@ -1,3 +1,5 @@
+import { NavigationHelpers, ParamListBase } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import {
   ScrollView,
@@ -6,11 +8,38 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { RootStackParamList } from "../App";
+import { useAppSelector } from "../state/hooks";
 
-export default function ProfileScreen() {
+type Props = NativeStackScreenProps<RootStackParamList, "Profile">;
+
+export default function ProfileScreen({ route, navigation }: Props) {
+  const tester = useAppSelector((state) =>
+    state.testers.find((tester) => tester.id === route.params.testerId)
+  );
+
+  const showCombination = (id: number) => () => {
+    if (!tester) return;
+    navigation.navigate("Combination", {
+      tester: tester,
+      combinationId: id,
+    });
+  };
+
+  const addCombination = () => () => {};
+
   return (
     <>
       <View style={styles.profileContainer}>
+        <Text style={styles.textWhite}>{tester?.username}</Text>
+        <Text style={styles.textGrey}>
+          {tester?.age +
+            " age ◦ " +
+            tester?.combinations.length +
+            " combinations ◦ " +
+            tester?.id +
+            "#"}
+        </Text>
         <TouchableOpacity style={styles.button}>
           <Text
             style={{
@@ -24,14 +53,17 @@ export default function ProfileScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+
       <Text style={[styles.text2]}>Trained combinations</Text>
       <ScrollView style={styles.list}>
-        <TouchableOpacity style={styles.listItem}>
-          <Text style={styles.text}>Combination 1</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.listItem}>
-          <Text style={styles.text}>Combination 1</Text>
-        </TouchableOpacity>
+        {tester?.combinations.map((combination) => (
+          <TouchableOpacity
+            style={styles.listItem}
+            onPress={showCombination(combination.id)}
+          >
+            <Text style={styles.text}>{combination.title}</Text>
+          </TouchableOpacity>
+        ))}
       </ScrollView>
     </>
   );
@@ -44,6 +76,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "space-evenly",
+    paddingVertical: "10%",
   },
   list: {
     height: "60%",
@@ -59,19 +92,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderTopColor: "rgba(149, 154, 173, 0.4)",
     borderTopWidth: 1,
+    paddingHorizontal: "5%",
+  },
+  textWhite: {
+    fontSize: 32,
+    color: "#ffffff",
+    fontWeight: "600",
   },
   text: {
     fontSize: 20,
-    marginLeft: 30,
   },
   text2: {
+    marginHorizontal: "5%",
     fontSize: 20,
-    marginLeft: 30,
     fontWeight: "600",
     paddingVertical: 15,
     alignSelf: "flex-start",
     borderBottomColor: "#67718a",
     borderBottomWidth: 1,
+  },
+  textGrey: {
+    fontSize: 20,
+    color: "#ffffff",
+    opacity: 0.6,
   },
   button: {
     width: "50%",

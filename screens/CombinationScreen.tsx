@@ -1,3 +1,4 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import {
   ScrollView,
@@ -8,9 +9,19 @@ import {
   View,
   Picker,
 } from "react-native";
+import { RootStackParamList } from "../App";
 import RadioButton from "../components/RadioButton";
+import { useAppSelector } from "../state/hooks";
 
-export default function CombinationScreen() {
+type Props = NativeStackScreenProps<RootStackParamList, "Combination">;
+
+export default function CombinationScreen({ route, navigation }: Props) {
+  const tester = route.params.tester;
+
+  const combination = route.params.tester.combinations.find(
+    (c) => c.id === route.params.combinationId
+  );
+
   return (
     <>
       <View style={styles.profileContainer}>
@@ -21,24 +32,25 @@ export default function CombinationScreen() {
             fontSize: 18,
           }}
         >
-          Tester ◦ Combination name
+          {tester.username} ◦ {combination?.title}
         </Text>
       </View>
 
-      {/* <Text style={[styles.text2]}>Trained combinations</Text> */}
       <ScrollView style={styles.list}>
-        <Text style={[styles.greyText, { marginVertical: 4 }]}>Name: name</Text>
-
         <Text style={[styles.greyText, { marginVertical: 4 }]}>
-          Passcode length: 4
+          Passcode length: {combination?.pinLength}
         </Text>
 
         <Text style={[styles.greyText, { marginVertical: 4 }]}>
-          Classifier: classifier
+          Training sessions: {combination?.numberOfTrainingSteps}
         </Text>
 
         <Text style={[styles.greyText, { marginVertical: 4 }]}>
-          Features: UU, DD
+          Classifier: {combination?.classificator}
+        </Text>
+
+        <Text style={[styles.greyText, { marginVertical: 4 }]}>
+          Features: {combination?.features.toString()}
         </Text>
 
         <View
@@ -52,21 +64,37 @@ export default function CombinationScreen() {
         </View>
 
         <Text style={[styles.text]}>Tests:</Text>
-
-        <View style={styles.listItem}>
-          <Text style={styles.text3}>Tested as: impostor</Text>
-          <Text style={styles.text3}>Authenticated as: genuine user</Text>
-          <Text style={[styles.text3, { color: "#67718a" }]}>
-            Successfull ◦ 2022-07-08 ◦ index
+        {combination?.genuineTests.length ||
+        combination?.impostorTests.length ? (
+          <>
+            {combination?.genuineTests.map((test) => (
+              <View style={styles.listItem}>
+                <Text style={styles.text3}>Tested as: {test.testedAs}</Text>
+                <Text style={styles.text3}>
+                  Authenticated as: {test.authenticateAs}
+                </Text>
+                <Text style={[styles.text3, { color: "#67718a" }]}>
+                  {test.authentication} ◦ {test.date} ◦ {test.id}
+                </Text>
+              </View>
+            ))}
+            {combination?.impostorTests.map((test) => (
+              <View style={styles.listItem}>
+                <Text style={styles.text3}>Tested as: {test.testedAs}</Text>
+                <Text style={styles.text3}>
+                  Authenticated as: {test.authenticateAs}
+                </Text>
+                <Text style={[styles.text3, { color: "#67718a" }]}>
+                  {test.authentication} ◦ {test.date} ◦ {test.id}
+                </Text>
+              </View>
+            ))}
+          </>
+        ) : (
+          <Text style={[styles.greyText, { marginVertical: 4 }]}>
+            This combination has no tests
           </Text>
-        </View>
-        <View style={styles.listItem}>
-          <Text style={styles.text3}>Tested as: impostor</Text>
-          <Text style={styles.text3}>Authenticated as: genuine user</Text>
-          <Text style={[styles.text3, { color: "#67718a" }]}>
-            Successfull ◦ 2022-07-08 ◦ index
-          </Text>
-        </View>
+        )}
 
         <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
           <TouchableOpacity style={styles.button}>

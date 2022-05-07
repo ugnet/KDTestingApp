@@ -13,23 +13,37 @@ import { store } from "./state/store";
 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Tester } from "./state/testers_slice";
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamList = {
+  Profile: { testerId: number };
+  Testers: undefined;
+  Combination: { tester: Tester; combinationId: number };
+  Register: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+type Props = NativeStackScreenProps<RootStackParamList, "Profile">;
 
 function MyStack() {
   return (
     <Stack.Navigator
+      initialRouteName="Testers"
       screenOptions={{
         headerShown: false,
       }}
     >
       <Stack.Screen name="Testers" component={TestersScreen} />
       <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="Combination" component={CombinationScreen} />
       <Stack.Screen name="Register" component={RegisterTester} />
+      {/* 
       <Stack.Screen name="PinInput" component={PinInputScreen} />
       <Stack.Screen name="Combination" component={CombinationScreen} />
       <Stack.Screen name="TestingResult" component={TestingResultScreen} />
-      <Stack.Screen name="AddCombination" component={AddCombinationScreen} />
+      <Stack.Screen name="AddCombination" component={AddCombinationScreen} /> */}
     </Stack.Navigator>
   );
 }
