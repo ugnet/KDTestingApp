@@ -1,3 +1,4 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import {
   ScrollView,
@@ -6,11 +7,78 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Picker,
 } from "react-native";
+import { RootStackParamList } from "../App";
 import RadioButton from "../components/RadioButton";
+import { useAppSelector, useAppDispatch } from "../state/hooks";
+import { addCombination, Combination } from "../state/testers_slice";
 
-export default function AddCombinationScreen() {
+type Props = NativeStackScreenProps<RootStackParamList, "AddCombination">;
+
+export default function AddCombinationScreen({ route, navigation }: Props) {
+  const dispatch = useAppDispatch();
+
+  const [title, settitle] = useState("");
+  const [length, setLength] = useState("");
+  const [steps, setSteps] = useState("");
+  const [error, setError] = React.useState(false);
+
+  const classifiers = useAppSelector((state) => state.classifiers);
+  const features = useAppSelector((state) => state.features);
+  const tester = useAppSelector((state) =>
+    state.testers.find((t) => t.id === route.params.testerId)
+  );
+
+  const [classifiersSelection, setClassifiersSelection] = useState(0);
+  const [featuresSelection, setFeaturesSelection] = useState<Array<number>>([]);
+
+  const handleFeatureSelect = (id: number) => () => {
+    if (featuresSelection.includes(id)) {
+      setFeaturesSelection([...featuresSelection.filter((i) => i !== id)]);
+      return;
+    } else {
+      setFeaturesSelection([...featuresSelection, id]);
+    }
+  };
+
+  const handleAddCombination = () => {
+    if (!tester) return;
+
+    if (
+      !title ||
+      !length ||
+      !steps ||
+      !classifiersSelection ||
+      !featuresSelection.length ||
+      parseInt(length) > 16 ||
+      parseInt(length) < 4 ||
+      parseInt(steps) > 20 ||
+      parseInt(steps) < 6
+    )
+      return setError(true);
+
+    const combination: Combination = {
+      id: tester?.combinations.length + 1,
+      testerId: route.params.testerId,
+      title: title,
+      classificator: classifiersSelection,
+      features: featuresSelection,
+      pinLength: parseInt(length),
+      pinCode: "",
+      numberOfTrainingSteps: parseInt(steps),
+      genuineTests: [],
+      impostorTests: [],
+    };
+
+    dispatch(addCombination(combination));
+
+    navigation.navigate("PinInput", {
+      testerId: route.params.testerId,
+      combinationId: tester?.combinations.length + 1,
+      phase: "creatingPin",
+    });
+  };
+
   return (
     <>
       <View style={styles.profileContainer}>
@@ -36,35 +104,67 @@ export default function AddCombinationScreen() {
           Select classifier, features and pin length for new keystroke dynamics
           model combination
         </Text>
+        {error ? (
+          <Text style={[styles.errorText, { marginHorizontal: "5%" }]}>
+            Incorrect format
+          </Text>
+        ) : null}
 
         <Text style={[styles.greyText, { marginVertical: 10 }]}>
-          Combination name
+          Combination title
         </Text>
-        <TextInput style={styles.input} placeholder="Combination name*" />
+        <TextInput
+          style={styles.input}
+          placeholder="Combination name"
+          value={title}
+          onChangeText={settitle}
+        />
 
         <Text style={[styles.greyText, { marginVertical: 10 }]}>
           Passcode length
         </Text>
         <TextInput
           style={styles.input}
-          placeholder="1-16"
+          placeholder="4-16"
           keyboardType="numeric"
+          value={length}
+          onChangeText={setLength}
+        />
+
+        <Text style={[styles.greyText, { marginVertical: 10 }]}>
+          Number of training steps
+        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder="6-20"
+          keyboardType="numeric"
+          value={steps}
+          onChangeText={setSteps}
         />
 
         <Text style={[styles.greyText, { marginVertical: 10 }]}>
           Classifier
         </Text>
-        <RadioButton selected label={"Classifier 1"} />
-        <RadioButton selected label={"Classifier 1"} />
-        <RadioButton selected label={"Classifier 1"} />
+        {classifiers.map((c) => (
+          <RadioButton
+            label={c.title}
+            selected={classifiersSelection === c.id}
+            onPress={() => setClassifiersSelection(c.id)}
+          />
+        ))}
 
         <Text style={[styles.greyText, { marginVertical: 10 }]}>
           Combination of features
         </Text>
-        <RadioButton selected label={"Classifier 1"} />
-        <RadioButton selected label={"Classifier 1"} />
-        <RadioButton selected label={"Classifier 1"} />
-        <TouchableOpacity style={styles.button}>
+        {features.map((f) => (
+          <RadioButton
+            label={f.title}
+            selected={featuresSelection.includes(f.id)}
+            onPress={handleFeatureSelect(f.id)}
+          />
+        ))}
+
+        <TouchableOpacity style={styles.button} onPress={handleAddCombination}>
           <Text
             style={{
               color: "#ffffff",
@@ -73,7 +173,7 @@ export default function AddCombinationScreen() {
               fontSize: 18,
             }}
           >
-            Add combination
+            Train combination
           </Text>
         </TouchableOpacity>
       </ScrollView>
@@ -102,6 +202,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#687089",
     opacity: 0.65,
+    alignSelf: "flex-start",
+    marginHorizontal: "5%",
   },
   profileContainer: {
     backgroundColor: "#67718a",
@@ -143,5 +245,13 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     margin: 20,
+  },
+  errorText: {
+    fontSize: 14,
+    fontWeight: "400",
+    textAlign: "center",
+    color: "#fa7470",
+    opacity: 0.65,
+    marginVertical: 4,
   },
 });

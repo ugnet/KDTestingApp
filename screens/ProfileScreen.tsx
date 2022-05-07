@@ -26,7 +26,12 @@ export default function ProfileScreen({ route, navigation }: Props) {
     });
   };
 
-  const addCombination = () => () => {};
+  const addCombination = () => {
+    if (!tester) return;
+    navigation.navigate("AddCombination", {
+      testerId: tester.id,
+    });
+  };
 
   return (
     <>
@@ -40,7 +45,7 @@ export default function ProfileScreen({ route, navigation }: Props) {
             tester?.id +
             "#"}
         </Text>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={addCombination}>
           <Text
             style={{
               color: "#ffffff",

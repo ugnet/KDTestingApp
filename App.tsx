@@ -2,7 +2,7 @@ import React from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
 import AddCombinationScreen from "./screens/AddCombinationScreen";
 import CombinationScreen from "./screens/CombinationScreen";
-import PinInputScreen from "./screens/PinInputScreen";
+import PinInputScreen, { PhaseType } from "./screens/PinInputScreen";
 import ProfileScreen from "./screens/ProfileScreen";
 import RegisterTester from "./screens/RegisterTester";
 import TestersScreen from "./screens/TestersScreen";
@@ -17,10 +17,12 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Tester } from "./state/testers_slice";
 
 export type RootStackParamList = {
-  Profile: { testerId: number };
-  Testers: undefined;
-  Combination: { tester: Tester; combinationId: number };
   Register: undefined;
+  Testers: undefined;
+  Profile: { testerId: number };
+  AddCombination: { testerId: number };
+  Combination: { tester: Tester; combinationId: number };
+  PinInput: { testerId: number; combinationId: number; phase: PhaseType };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -39,11 +41,13 @@ function MyStack() {
       <Stack.Screen name="Profile" component={ProfileScreen} />
       <Stack.Screen name="Combination" component={CombinationScreen} />
       <Stack.Screen name="Register" component={RegisterTester} />
-      {/* 
+      <Stack.Screen name="AddCombination" component={AddCombinationScreen} />
       <Stack.Screen name="PinInput" component={PinInputScreen} />
+      {/* 
+      
       <Stack.Screen name="Combination" component={CombinationScreen} />
       <Stack.Screen name="TestingResult" component={TestingResultScreen} />
-      <Stack.Screen name="AddCombination" component={AddCombinationScreen} /> */}
+      */}
     </Stack.Navigator>
   );
 }

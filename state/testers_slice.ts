@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import CombinationScreen from "../screens/CombinationScreen";
 
 export interface Feature {
   name: string;
@@ -18,9 +19,10 @@ export interface Test {
 
 export interface Combination {
   id: number;
+  testerId: number;
   title: string;
-  classificator: string;
-  features: string[];
+  classificator: number;
+  features: number[];
   pinLength: number;
   pinCode: string;
   numberOfTrainingSteps: number;
@@ -46,9 +48,10 @@ const initialState: Testers = [
     combinations: [
       {
         id: 1,
+        testerId: 1,
         title: "combination 1",
-        classificator: "classficator",
-        features: ["DD", "PP"],
+        classificator: 1,
+        features: [1, 2],
         pinLength: 8,
         pinCode: "44532347",
         numberOfTrainingSteps: 7,
@@ -88,8 +91,13 @@ const testersSlice = createSlice({
     addTester(state, action: PayloadAction<Tester>) {
       state.push(action.payload);
     },
+    addCombination(state, action: PayloadAction<Combination>) {
+      state
+        .find((tester) => tester.id === action.payload.testerId)
+        ?.combinations.push(action.payload);
+    },
   },
 });
 
-export const { addTester } = testersSlice.actions;
+export const { addTester, addCombination } = testersSlice.actions;
 export default testersSlice.reducer;
