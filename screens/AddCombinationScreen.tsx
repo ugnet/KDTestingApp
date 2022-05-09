@@ -69,6 +69,7 @@ export default function AddCombinationScreen({ route, navigation }: Props) {
       numberOfTrainingSteps: parseInt(steps),
       genuineTests: [],
       impostorTests: [],
+      trainingData: [],
     };
 
     dispatch(addCombination(combination));

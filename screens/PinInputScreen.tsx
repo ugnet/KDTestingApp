@@ -1,6 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import {
+  GestureResponderEvent,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -10,7 +11,13 @@ import {
 import { RootStackParamList } from "../App";
 import PinCircle from "../components/PinCircle";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
-import { modifyCombinationPin } from "../state/testers_slice";
+import {
+  addTrainingStepData,
+  InputData,
+  KeyPressData,
+  modifyCombinationPin,
+  PressEventType,
+} from "../state/testers_slice";
 
 export type PhaseType =
   | "training"
@@ -22,8 +29,17 @@ type Props = NativeStackScreenProps<RootStackParamList, "PinInput">;
 
 export default function PinInputScreen({ route, navigation }: Props) {
   const dispatch = useAppDispatch();
+  const [phase, setPhase] = useState(route.params.phase);
+  // INPUT DATA:
+  const inputDataInit: InputData = {
+    input: "",
+    purpose: phase === "training" ? "training" : "testing",
+    data: [],
+  };
 
-  const phase = route.params.phase;
+  useEffect(() => {
+    setPhase(route.params.phase);
+  }, [route.params.phase]);
 
   const tester = useAppSelector((state) =>
     state.testers.find((t) => t.id === route.params.testerId)
@@ -49,8 +65,10 @@ export default function PinInputScreen({ route, navigation }: Props) {
     pass[currentIndex] = key;
     setPasscode(pass);
     setError(false);
+    console.log("input");
     if (currentIndex + 1 === combination?.pinLength) {
       if (phase === "creatingPin") {
+        console.log("bb");
         // save pin
         dispatch(
           modifyCombinationPin({
@@ -64,19 +82,6 @@ export default function PinInputScreen({ route, navigation }: Props) {
           combinationId: route.params.combinationId,
           phase: "training",
         });
-      } else if (phase === "training") {
-        //TRAINING
-        if (!validatePasscode(passcode.join("") + key)) {
-          setError(true);
-        } else {
-          if (trainingStep === combination.numberOfTrainingSteps) {
-            navigation.pop(2);
-          }
-          setTrainingStep(trainingStep + 1);
-        }
-
-        clearInput();
-        return;
       } else if (phase === "testingGenuine" || phase === "testingImpostor") {
         if (!validatePasscode(passcode.join("") + key)) {
           setError(true);
@@ -103,6 +108,7 @@ export default function PinInputScreen({ route, navigation }: Props) {
   const clearInput = () => {
     setCurrentIndex(0);
     setPasscode(Array(combination?.pinLength).join(".").split("."));
+    setInputData(inputDataInit);
   };
 
   const getDescription = () => {
@@ -143,6 +149,76 @@ export default function PinInputScreen({ route, navigation }: Props) {
     }
   };
 
+  const [inputData, setInputData] = useState(inputDataInit);
+
+  const handlePressIn = (e: GestureResponderEvent, key: string) => {
+    if (phase === "creatingPin") return;
+    setInputData({
+      ...inputData,
+      input: inputData.input.concat(key),
+      data: [...inputData.data, getPressData(e, key, "pressIn")],
+    });
+  };
+
+  const handlePressOut = (e: GestureResponderEvent, key: string) => {
+    if (phase === "creatingPin") return;
+    console.log("PRESS OUT", {
+      ...inputData,
+      data: [...inputData.data, getPressData(e, key, "pressOut")],
+    });
+    setInputData({
+      ...inputData,
+      data: [...inputData.data, getPressData(e, key, "pressOut")],
+    });
+  };
+
+  useEffect(() => {
+    if (currentIndex === combination?.pinLength) {
+      if (phase === "training") {
+        //TRAINING
+        if (!validatePasscode(passcode.join(""))) {
+          setError(true);
+        } else {
+          // Save training step input data
+          console.log("training !!!");
+          dispatch(
+            addTrainingStepData({
+              testerId: route.params.testerId,
+              combinationId: route.params.combinationId,
+              data: inputData,
+            })
+          );
+          console.log("inputData", inputData);
+          if (trainingStep === combination.numberOfTrainingSteps) {
+            navigation.pop(2);
+          }
+          setTrainingStep(trainingStep + 1);
+        }
+
+        clearInput();
+        return;
+      }
+    }
+  }, [inputData, passcode]);
+
+  const getPressData = (
+    e: GestureResponderEvent,
+    key: string,
+    pressEventType: PressEventType
+  ): KeyPressData => {
+    return {
+      id: inputData.data?.length || 0,
+      key: key,
+      pressEventType: pressEventType,
+      timeStamp: e.timeStamp,
+      pageX: e.nativeEvent.pageX,
+      pageY: e.nativeEvent.pageY,
+      locationX: e.nativeEvent.locationX,
+      locationY: e.nativeEvent.locationY,
+      gyroscode: { x: 0, y: 0, z: 0 },
+    };
+  };
+
   return (
     <>
       <SafeAreaView style={styles.container}>
@@ -167,41 +243,66 @@ export default function PinInputScreen({ route, navigation }: Props) {
           ))}
         </View>
         <View style={styles.space4} />
+
         <View style={styles.gridContainer}>
-          <TouchableOpacity style={styles.pinButton} onPress={enterSymbol("1")}>
-            <Text style={styles.buttonText}>1</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.pinButton} onPress={enterSymbol("2")}>
-            <Text style={styles.buttonText}>2</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.pinButton} onPress={enterSymbol("3")}>
-            <Text style={styles.buttonText}>3</Text>
-          </TouchableOpacity>
+          {["1", "2", "3"].map((key) => (
+            <TouchableOpacity
+              style={styles.pinButton}
+              onPress={enterSymbol(key)}
+              onPressIn={(event: GestureResponderEvent) =>
+                handlePressIn(event, key)
+              }
+              onPressOut={(event: GestureResponderEvent) =>
+                handlePressOut(event, key)
+              }
+            >
+              <Text style={styles.buttonText}>{key}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
         <View style={styles.gridContainer}>
-          <TouchableOpacity style={styles.pinButton} onPress={enterSymbol("4")}>
-            <Text style={styles.buttonText}>4</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.pinButton} onPress={enterSymbol("5")}>
-            <Text style={styles.buttonText}>5</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.pinButton} onPress={enterSymbol("6")}>
-            <Text style={styles.buttonText}>6</Text>
-          </TouchableOpacity>
+          {["4", "5", "6"].map((key) => (
+            <TouchableOpacity
+              style={styles.pinButton}
+              onPress={enterSymbol(key)}
+              onPressIn={(event: GestureResponderEvent) =>
+                handlePressIn(event, key)
+              }
+              onPressOut={(event: GestureResponderEvent) =>
+                handlePressOut(event, key)
+              }
+            >
+              <Text style={styles.buttonText}>{key}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
         <View style={styles.gridContainer}>
-          <TouchableOpacity style={styles.pinButton} onPress={enterSymbol("7")}>
-            <Text style={styles.buttonText}>7</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.pinButton} onPress={enterSymbol("8")}>
-            <Text style={styles.buttonText}>8</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.pinButton} onPress={enterSymbol("9")}>
-            <Text style={styles.buttonText}>9</Text>
-          </TouchableOpacity>
+          {["7", "8", "9"].map((key) => (
+            <TouchableOpacity
+              style={styles.pinButton}
+              onPress={enterSymbol(key)}
+              onPressIn={(event: GestureResponderEvent) =>
+                handlePressIn(event, key)
+              }
+              onPressOut={(event: GestureResponderEvent) =>
+                handlePressOut(event, key)
+              }
+            >
+              <Text style={styles.buttonText}>{key}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
         <View style={styles.gridContainer}>
-          <TouchableOpacity style={styles.pinButton} onPress={enterSymbol("0")}>
+          <TouchableOpacity
+            style={styles.pinButton}
+            onPress={enterSymbol("0")}
+            onPressIn={(event: GestureResponderEvent) =>
+              handlePressIn(event, "0")
+            }
+            onPressOut={(event: GestureResponderEvent) =>
+              handlePressOut(event, "0")
+            }
+          >
             <Text style={styles.buttonText}>0</Text>
           </TouchableOpacity>
         </View>

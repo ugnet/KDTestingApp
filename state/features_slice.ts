@@ -18,6 +18,14 @@ const initialState: Features = [
     id: 2,
     title: "DD",
   },
+  {
+    id: 2,
+    title: "UP",
+  },
+  {
+    id: 3,
+    title: "DU",
+  },
 ];
 
 const featuresSlice = createSlice({

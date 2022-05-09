@@ -15,6 +15,7 @@ export interface Test {
   authentication: AuthenticationStatus;
   date: string;
   id: number;
+  inputData?: InputData;
 }
 
 export interface Combination {
@@ -26,8 +27,12 @@ export interface Combination {
   pinLength: number;
   pinCode: string;
   numberOfTrainingSteps: number;
+  trainingData: Array<InputData>; //TODO
   genuineTests: Array<Test>;
   impostorTests: Array<Test>;
+  FAR?: number;
+  FRR?: number;
+  EER?: number;
 }
 
 export interface Tester {
@@ -39,6 +44,28 @@ export interface Tester {
 }
 
 export interface Testers extends Array<Tester> {}
+
+// INPUT
+export type PressEventType = "pressIn" | "pressOut" | "press";
+
+export type InputPurpose = "training" | "testing";
+
+export interface KeyPressData {
+  id: number;
+  key: string;
+  pressEventType: PressEventType;
+  timeStamp: number;
+  pageX: number;
+  pageY: number;
+  locationX: number;
+  locationY: number;
+  gyroscode: { x: number; y: number; z: number };
+}
+export interface InputData {
+  input: string; //passcode
+  purpose: InputPurpose;
+  data: Array<KeyPressData>;
+}
 
 const initialState: Testers = [
   {
@@ -56,6 +83,7 @@ const initialState: Testers = [
         pinLength: 8,
         pinCode: "44532347",
         numberOfTrainingSteps: 7,
+        trainingData: [],
         genuineTests: [
           {
             testedAs: "genuine",
@@ -111,9 +139,37 @@ const testersSlice = createSlice({
         }
       }
     },
+    addTrainingStepData(
+      state,
+      action: PayloadAction<{
+        testerId: number;
+        combinationId: number;
+        data: InputData;
+      }>
+    ) {
+      const tester = state.find(
+        (tester) => tester.id == action.payload.testerId
+      );
+      if (tester) {
+        const combination = tester.combinations.find(
+          (c) => c.id == action.payload.combinationId
+        );
+        if (combination) {
+          combination.trainingData = [
+            ...combination.trainingData,
+            action.payload.data,
+          ];
+        }
+      }
+    },
   },
 });
 
-export const { addTester, addCombination, modifyCombinationPin } =
-  testersSlice.actions;
+export const {
+  addTester,
+  addCombination,
+  modifyCombinationPin,
+  addTrainingStepData,
+} = testersSlice.actions;
+
 export default testersSlice.reducer;

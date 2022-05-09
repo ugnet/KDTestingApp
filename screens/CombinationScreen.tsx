@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
   Image,
 } from "react-native";
 import { RootStackParamList } from "../App";
+import { calculateDU, calculateUD } from "../calculations/featureExtractors";
 import RadioButton from "../components/RadioButton";
 import { useAppSelector } from "../state/hooks";
 
@@ -37,6 +38,16 @@ export default function CombinationScreen({ route, navigation }: Props) {
       phase: "testingImpostor",
     });
   };
+
+  useEffect(() => {
+    // CAlCULATE features if not yes calculated
+
+    if (combination?.trainingData.length) {
+      // calculate();
+      console.log("DU", calculateDU(combination?.trainingData[0]));
+      console.log("UD", calculateUD(combination?.trainingData[0]));
+    }
+  }, [combination]);
 
   return (
     <>
