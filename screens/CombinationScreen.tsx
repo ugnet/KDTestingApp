@@ -10,7 +10,11 @@ import {
   Image,
 } from "react-native";
 import { RootStackParamList } from "../App";
-import { calculateDU, calculateUD } from "../calculations/featureExtractors";
+import {
+  calculateDU,
+  calculateUD,
+  extractFeatures,
+} from "../calculations/featureExtractors";
 import RadioButton from "../components/RadioButton";
 import { useAppSelector } from "../state/hooks";
 
@@ -44,6 +48,8 @@ export default function CombinationScreen({ route, navigation }: Props) {
 
     if (combination?.trainingData.length) {
       // calculate();
+      console.log("extractedFeatures", extractFeatures(combination));
+
       console.log("DU", calculateDU(combination?.trainingData[0]));
       console.log("UD", calculateUD(combination?.trainingData[0]));
     }
@@ -92,10 +98,9 @@ export default function CombinationScreen({ route, navigation }: Props) {
         </View>
 
         <Text style={[styles.text]}>Tests:</Text>
-        {combination?.genuineTests.length ||
-        combination?.impostorTests.length ? (
+        {combination?.tests.length ? (
           <>
-            {combination?.genuineTests.map((test) => (
+            {combination?.tests.map((test) => (
               <View style={styles.listItem}>
                 <View>
                   <Text style={styles.text3}>Tested as: {test.testedAs}</Text>
@@ -116,7 +121,7 @@ export default function CombinationScreen({ route, navigation }: Props) {
                 />
               </View>
             ))}
-            {combination?.impostorTests.map((test) => (
+            {/* {combination?.impostorTests.map((test) => (
               <View style={styles.listItem}>
                 <View>
                   <Text style={styles.text3}>Tested as: {test.testedAs}</Text>
@@ -136,7 +141,7 @@ export default function CombinationScreen({ route, navigation }: Props) {
                   style={styles.image}
                 />
               </View>
-            ))}
+            ))} */}
           </>
         ) : (
           <Text style={[styles.greyText, { marginVertical: 4 }]}>
@@ -144,7 +149,13 @@ export default function CombinationScreen({ route, navigation }: Props) {
           </Text>
         )}
 
-        <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            marginBottom: 100,
+          }}
+        >
           <TouchableOpacity style={styles.button} onPress={handleTestGenuine}>
             <Text
               style={{

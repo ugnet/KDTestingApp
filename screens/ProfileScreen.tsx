@@ -69,6 +69,7 @@ export default function ProfileScreen({ route, navigation }: Props) {
         <ScrollView style={styles.list}>
           {tester?.combinations.map((combination) => (
             <TouchableOpacity
+              key={combination.id}
               style={styles.listItem}
               onPress={showCombination(combination.id)}
             >
@@ -83,8 +84,7 @@ export default function ProfileScreen({ route, navigation }: Props) {
                     " steps ◦ " +
                     combination.pinLength +
                     " pin length  ◦ " +
-                    (combination.genuineTests.length +
-                      combination.impostorTests.length) +
+                    combination.tests.length +
                     " tests"}
                 </Text>
               </View>

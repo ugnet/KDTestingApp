@@ -6,6 +6,7 @@ export interface Classfier {
   id: number;
   title: string;
   type: ClassifierType;
+  short: string;
   calculation?: () => void;
 }
 
@@ -14,12 +15,9 @@ export interface Classfiers extends Array<Classfier> {}
 const initialState: Classfiers = [
   {
     id: 1,
-    title: "Median",
-    type: "statistical",
-  },
-  {
-    id: 2,
-    title: "Median 2",
+    title:
+      "Computation efficient statistical classifier (Cheng-Jung Tasia, Ting-Yi Chang and others) ",
+    short: "Computation efficient statistical",
     type: "statistical",
   },
 ];

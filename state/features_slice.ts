@@ -12,19 +12,19 @@ export interface Features extends Array<Feature> {}
 const initialState: Features = [
   {
     id: 1,
-    title: "UU",
+    title: "Up–up time (UU)",
   },
   {
     id: 2,
-    title: "DD",
-  },
-  {
-    id: 2,
-    title: "UP",
+    title: "Down–down time (DD)",
   },
   {
     id: 3,
-    title: "DU",
+    title: "Up–down time (UD)",
+  },
+  {
+    id: 4,
+    title: "Down–up time (DU)",
   },
 ];
 

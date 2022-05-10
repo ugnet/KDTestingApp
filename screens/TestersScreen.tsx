@@ -10,7 +10,6 @@ import {
   Image,
 } from "react-native";
 import { RootStackParamList } from "../App";
-import Icon from "../components/Icon";
 
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 
@@ -46,7 +45,7 @@ export default function TestersScreen({ navigation }: Props) {
       <ScrollView style={styles.list}>
         {testers.map((tester) => (
           <TouchableOpacity
-            key={tester.username}
+            key={tester.id}
             style={styles.listItem}
             onPress={navigateToProfile(tester.id)}
           >

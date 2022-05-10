@@ -1,6 +1,6 @@
 // FEATURE EXTRACTION FUNCTIONS FOR TRAINING STEP
 
-import { InputData } from "../state/testers_slice";
+import { Combination, InputData } from "../state/testers_slice";
 
 // hold time- Down–up time: in the ith training sample, the time
 // interval between the press of key j and the release; the
@@ -57,4 +57,78 @@ export const calculateUU = (inputData: InputData) => {
       UU.push(pressOut2.timeStamp - pressOut.timeStamp);
     }
   }
+  return UU;
+};
+
+// {
+//     id: 1,
+//     title: "UU",
+//   },
+//   {
+//     id: 2,
+//     title: "DD",
+//   },
+//   {
+//     id: 3,
+//     title: "UD",
+//   },
+//   {
+//     id: 4,
+//     title: "DU",
+//   },
+
+export const extractFeatures = (combination: Combination) => {
+  const features = combination.features;
+  const steps = combination.numberOfTrainingSteps;
+
+  // feati = {DUi, UDi, DDi, Pi, Si}={Xi,1, Xi,2, ... , Xi,5k–2}
+  // extractedFeatures= [feat1, feat2, ..., feat training steps num]
+  const extractedFeatures: Array<Array<number>> = [];
+
+  for (let i = 0; i < steps; i++) {
+    let feati: any = [];
+    if (features.includes(1)) {
+      console.log("calculateDU");
+      feati = [...feati, ...calculateUU(combination.trainingData[i])];
+    }
+    if (features.includes(2)) {
+      console.log("calculateDD");
+      feati = [...feati, ...calculateDD(combination.trainingData[i])];
+    }
+    if (features.includes(3)) {
+      console.log("calculateUD");
+      feati = [...feati, ...calculateUD(combination.trainingData[i])];
+    }
+    if (features.includes(4)) {
+      console.log("calculateDU");
+      feati = [...feati, ...calculateDU(combination.trainingData[i])];
+    }
+    extractedFeatures.push(feati);
+  }
+  const mergedFeatures: Array<number> = Array.prototype.concat.apply(
+    [],
+    extractedFeatures
+  );
+  return mergedFeatures;
+};
+
+export const extractFeaturesTesting = (
+  inputData: InputData,
+  features: number[]
+) => {
+  // feati = {DUi, UDi, DDi, Pi, Si}={Xi,1, Xi,2, ... , Xi,5k–2}
+  let feati: Array<number> = [];
+  if (features.includes(1)) {
+    feati = [...feati, ...calculateUU(inputData)];
+  }
+  if (features.includes(2)) {
+    feati = [...feati, ...calculateDD(inputData)];
+  }
+  if (features.includes(3)) {
+    feati = [...feati, ...calculateUD(inputData)];
+  }
+  if (features.includes(4)) {
+    feati = [...feati, ...calculateDU(inputData)];
+  }
+  return feati;
 };

@@ -28,8 +28,8 @@ export interface Combination {
   pinCode: string;
   numberOfTrainingSteps: number;
   trainingData: Array<InputData>; //TODO
-  genuineTests: Array<Test>;
-  impostorTests: Array<Test>;
+  tests: Array<Test>;
+  // impostorTests: Array<Test>;
   FAR?: number;
   FRR?: number;
   EER?: number;
@@ -84,7 +84,7 @@ const initialState: Testers = [
         pinCode: "44532347",
         numberOfTrainingSteps: 7,
         trainingData: [],
-        genuineTests: [
+        tests: [
           {
             testedAs: "genuine",
             authenticateAs: "impostor",
@@ -92,8 +92,6 @@ const initialState: Testers = [
             date: "2022-01-01",
             id: 1,
           },
-        ],
-        impostorTests: [
           {
             testedAs: "impostor",
             authenticateAs: "impostor",
@@ -162,6 +160,26 @@ const testersSlice = createSlice({
         }
       }
     },
+    addTest(
+      state,
+      action: PayloadAction<{
+        testerId: number;
+        combinationId: number;
+        test: Test;
+      }>
+    ) {
+      const tester = state.find(
+        (tester) => tester.id == action.payload.testerId
+      );
+      if (tester) {
+        const combination = tester.combinations.find(
+          (c) => c.id == action.payload.combinationId
+        );
+        if (combination) {
+          combination.tests = [...combination.tests, action.payload.test];
+        }
+      }
+    },
   },
 });
 
@@ -170,6 +188,7 @@ export const {
   addCombination,
   modifyCombinationPin,
   addTrainingStepData,
+  addTest,
 } = testersSlice.actions;
 
 export default testersSlice.reducer;

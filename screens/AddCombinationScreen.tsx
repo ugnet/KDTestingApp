@@ -67,8 +67,7 @@ export default function AddCombinationScreen({ route, navigation }: Props) {
       pinLength: parseInt(length),
       pinCode: "",
       numberOfTrainingSteps: parseInt(steps),
-      genuineTests: [],
-      impostorTests: [],
+      tests: [],
       trainingData: [],
     };
 
@@ -150,6 +149,7 @@ export default function AddCombinationScreen({ route, navigation }: Props) {
         </Text>
         {classifiers.map((c) => (
           <RadioButton
+            key={c.id}
             label={c.title}
             selected={classifiersSelection === c.id}
             onPress={() => setClassifiersSelection(c.id)}
@@ -161,6 +161,7 @@ export default function AddCombinationScreen({ route, navigation }: Props) {
         </Text>
         {features.map((f) => (
           <RadioButton
+            key={f.id}
             label={f.title}
             selected={featuresSelection.includes(f.id)}
             onPress={handleFeatureSelect(f.id)}
@@ -248,6 +249,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     margin: 20,
+    marginBottom: 100,
   },
   errorText: {
     fontSize: 14,

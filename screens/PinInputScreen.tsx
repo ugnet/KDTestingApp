@@ -9,9 +9,11 @@ import {
   View,
 } from "react-native";
 import { RootStackParamList } from "../App";
+import { authenticate1 } from "../calculations/classifiers";
 import PinCircle from "../components/PinCircle";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import {
+  addTest,
   addTrainingStepData,
   InputData,
   KeyPressData,
@@ -28,6 +30,7 @@ export type PhaseType =
 type Props = NativeStackScreenProps<RootStackParamList, "PinInput">;
 
 export default function PinInputScreen({ route, navigation }: Props) {
+  const THRESHOLD = 2.7;
   const dispatch = useAppDispatch();
   const [phase, setPhase] = useState(route.params.phase);
   // INPUT DATA:
@@ -82,20 +85,6 @@ export default function PinInputScreen({ route, navigation }: Props) {
           combinationId: route.params.combinationId,
           phase: "training",
         });
-      } else if (phase === "testingGenuine" || phase === "testingImpostor") {
-        if (!validatePasscode(passcode.join("") + key)) {
-          setError(true);
-        } else {
-          //TODO: ADD TEST
-          navigation.navigate("TestingResult", {
-            authenticatedAs: "genuine", //TODO
-            testedAs: phase === "testingGenuine" ? "genuine" : "impostor",
-            status: "success",
-          });
-        }
-
-        clearInput();
-        return;
       }
     }
     setCurrentIndex(currentIndex + 1);
@@ -162,10 +151,6 @@ export default function PinInputScreen({ route, navigation }: Props) {
 
   const handlePressOut = (e: GestureResponderEvent, key: string) => {
     if (phase === "creatingPin") return;
-    console.log("PRESS OUT", {
-      ...inputData,
-      data: [...inputData.data, getPressData(e, key, "pressOut")],
-    });
     setInputData({
       ...inputData,
       data: [...inputData.data, getPressData(e, key, "pressOut")],
@@ -193,6 +178,44 @@ export default function PinInputScreen({ route, navigation }: Props) {
             navigation.pop(2);
           }
           setTrainingStep(trainingStep + 1);
+        }
+
+        clearInput();
+        return;
+      } else if (phase === "testingGenuine" || phase === "testingImpostor") {
+        if (!validatePasscode(passcode.join(""))) {
+          setError(true);
+        } else {
+          //TODO: ADD TEST
+          // console.log("!!!!!!", inputData);
+          const isLegitimate = authenticate1(combination, inputData, THRESHOLD);
+          dispatch(
+            addTest({
+              testerId: route.params.testerId,
+              combinationId: route.params.combinationId,
+              test: {
+                testedAs: phase === "testingGenuine" ? "genuine" : "impostor",
+                authenticateAs: isLegitimate ? "genuine" : "impostor",
+                authentication:
+                  (isLegitimate && phase === "testingGenuine") ||
+                  (!isLegitimate && phase === "testingImpostor")
+                    ? "success"
+                    : "fail",
+                date: new Date().toISOString().slice(0, 10),
+                id: combination.tests.length + 1,
+                inputData: inputData,
+              },
+            })
+          );
+          navigation.navigate("TestingResult", {
+            authenticatedAs: isLegitimate ? "genuine" : "impostor", //TODO
+            testedAs: phase === "testingGenuine" ? "genuine" : "impostor",
+            status:
+              (isLegitimate && phase === "testingGenuine") ||
+              (!isLegitimate && phase === "testingImpostor")
+                ? "success"
+                : "fail",
+          });
         }
 
         clearInput();
@@ -238,8 +261,12 @@ export default function PinInputScreen({ route, navigation }: Props) {
 
         <View style={styles.space4} />
         <View style={styles.gridContainer}>
-          {passcode.map((value) => (
-            <PinCircle filled={value !== ""} style={{ marginHorizontal: 4 }} />
+          {passcode.map((value, index) => (
+            <PinCircle
+              key={index}
+              filled={value !== ""}
+              style={{ marginHorizontal: 4 }}
+            />
           ))}
         </View>
         <View style={styles.space4} />
@@ -247,6 +274,7 @@ export default function PinInputScreen({ route, navigation }: Props) {
         <View style={styles.gridContainer}>
           {["1", "2", "3"].map((key) => (
             <TouchableOpacity
+              key={key}
               style={styles.pinButton}
               onPress={enterSymbol(key)}
               onPressIn={(event: GestureResponderEvent) =>
@@ -263,6 +291,7 @@ export default function PinInputScreen({ route, navigation }: Props) {
         <View style={styles.gridContainer}>
           {["4", "5", "6"].map((key) => (
             <TouchableOpacity
+              key={key}
               style={styles.pinButton}
               onPress={enterSymbol(key)}
               onPressIn={(event: GestureResponderEvent) =>
@@ -279,6 +308,7 @@ export default function PinInputScreen({ route, navigation }: Props) {
         <View style={styles.gridContainer}>
           {["7", "8", "9"].map((key) => (
             <TouchableOpacity
+              key={key}
               style={styles.pinButton}
               onPress={enterSymbol(key)}
               onPressIn={(event: GestureResponderEvent) =>
