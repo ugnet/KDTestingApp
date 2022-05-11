@@ -68,48 +68,48 @@ export interface InputData {
 }
 
 const initialState: Testers = [
-  {
-    id: 1,
-    username: "tester 1",
-    age: "23",
-    gender: "M",
-    combinations: [
-      {
-        id: 1,
-        testerId: 1,
-        title: "combination 1",
-        classificator: 1,
-        features: [1, 2],
-        pinLength: 8,
-        pinCode: "44532347",
-        numberOfTrainingSteps: 7,
-        trainingData: [],
-        tests: [
-          {
-            testedAs: "genuine",
-            authenticateAs: "impostor",
-            authentication: "fail",
-            date: "2022-01-01",
-            id: 1,
-          },
-          {
-            testedAs: "impostor",
-            authenticateAs: "impostor",
-            authentication: "success",
-            date: "2022-01-01",
-            id: 2,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    username: "tester 2",
-    age: "24",
-    gender: "F",
-    combinations: [],
-  },
+  // {
+  //   id: 1,
+  //   username: "tester 1",
+  //   age: "23",
+  //   gender: "M",
+  //   combinations: [
+  //     {
+  //       id: 1,
+  //       testerId: 1,
+  //       title: "combination 1",
+  //       classificator: 1,
+  //       features: [1, 2],
+  //       pinLength: 8,
+  //       pinCode: "44532347",
+  //       numberOfTrainingSteps: 7,
+  //       trainingData: [],
+  //       tests: [
+  //         {
+  //           testedAs: "genuine",
+  //           authenticateAs: "impostor",
+  //           authentication: "fail",
+  //           date: "2022-01-01",
+  //           id: 1,
+  //         },
+  //         {
+  //           testedAs: "impostor",
+  //           authenticateAs: "impostor",
+  //           authentication: "success",
+  //           date: "2022-01-01",
+  //           id: 2,
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
+  // {
+  //   id: 2,
+  //   username: "tester 2",
+  //   age: "24",
+  //   gender: "F",
+  //   combinations: [],
+  // },
 ];
 
 const testersSlice = createSlice({
