@@ -15,6 +15,7 @@ import {
   calculateUD,
   extractFeatures,
 } from "../calculations/featureExtractors";
+import { calculateMetrics } from "../calculations/metrics";
 import RadioButton from "../components/RadioButton";
 import { useAppSelector } from "../state/hooks";
 
@@ -29,6 +30,8 @@ export default function CombinationScreen({ route, navigation }: Props) {
 
   const features = useAppSelector((state) => state.features);
   const classifiers = useAppSelector((state) => state.classifiers);
+
+  const metrics = combination ? calculateMetrics(combination) : null;
 
   const handleTestGenuine = () => {
     navigation.navigate("PinInput", {
@@ -45,18 +48,6 @@ export default function CombinationScreen({ route, navigation }: Props) {
       phase: "testingImpostor",
     });
   };
-
-  useEffect(() => {
-    // CAlCULATE features if not yes calculated
-
-    if (combination?.trainingData.length) {
-      // calculate();
-      console.log("extractedFeatures", extractFeatures(combination));
-
-      console.log("DU", calculateDU(combination?.trainingData[0]));
-      console.log("UD", calculateUD(combination?.trainingData[0]));
-    }
-  }, [combination]);
 
   return (
     <>
@@ -103,13 +94,13 @@ export default function CombinationScreen({ route, navigation }: Props) {
           }}
         >
           <Text style={[styles.greyText, { marginVertical: 4 }]}>
-            EER: {combination?.EER || "?"}%
+            EER: {metrics?.ERR || "?"}%
           </Text>
           <Text style={[styles.greyText, { marginVertical: 4 }]}>
-            FAR: {combination?.FAR || "?"}%
+            FAR: {metrics?.FAR || "?"}%
           </Text>
           <Text style={[styles.greyText, { marginVertical: 4 }]}>
-            FRR: {combination?.FRR || "?"}%
+            FRR: {metrics?.FRR || "?"}%
           </Text>
         </View>
 

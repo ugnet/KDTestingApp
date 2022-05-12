@@ -60,22 +60,18 @@ export const calculateUU = (inputData: InputData) => {
   return UU;
 };
 
-// {
-//     id: 1,
-//     title: "UU",
-//   },
-//   {
-//     id: 2,
-//     title: "DD",
-//   },
-//   {
-//     id: 3,
-//     title: "UD",
-//   },
-//   {
-//     id: 4,
-//     title: "DU",
-//   },
+// Pressure: in the ith training sample, the pressure of
+// touching the screen for the key j is called Pi,j.
+export const getPressures = (inputData: InputData) => {
+  const pressures = [];
+  for (let i = 0; i < inputData.data.length; i++) {
+    const pressure = inputData.data[i].pressure;
+    if (inputData.data[i].pressEventType === "pressOut") {
+      pressures.push(pressure);
+    }
+  }
+  return pressures;
+};
 
 export const extractFeatures = (combination: Combination) => {
   // kiekvienam zingsniui atskirai
@@ -104,11 +100,10 @@ export const extractFeatures = (combination: Combination) => {
       console.log("calculateDU");
       feati = [...feati, ...calculateDU(combination.trainingData[i])];
     }
-    // if (features.includes(5)) {
-    //TODO
-    // console.log("pressure");
-    // feati = [...feati, ...calculateDU(combination.trainingData[i])];
-    // }
+    if (features.includes(5)) {
+      console.log("pressure");
+      feati = [...feati, ...getPressures(combination.trainingData[i])];
+    }
     extractedFeatures.push(feati);
   }
   const mergedFeatures: Array<number> = Array.prototype.concat.apply(
@@ -137,9 +132,8 @@ export const extractFeaturesTesting = (
   if (features.includes(4)) {
     feati = [...feati, ...calculateDU(inputData)];
   }
-  // if (features.includes(5)) {
-  //TODO
-  // feati = [...feati, ...calculateDU(inputData)];
-  // }
+  if (features.includes(5)) {
+    feati = [...feati, ...getPressures(inputData)];
+  }
   return feati;
 };
