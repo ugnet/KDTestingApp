@@ -78,6 +78,7 @@ export const calculateUU = (inputData: InputData) => {
 //   },
 
 export const extractFeatures = (combination: Combination) => {
+  // kiekvienam zingsniui atskirai
   const features = combination.features;
   const steps = combination.numberOfTrainingSteps;
 
@@ -103,13 +104,19 @@ export const extractFeatures = (combination: Combination) => {
       console.log("calculateDU");
       feati = [...feati, ...calculateDU(combination.trainingData[i])];
     }
+    // if (features.includes(5)) {
+    //TODO
+    // console.log("pressure");
+    // feati = [...feati, ...calculateDU(combination.trainingData[i])];
+    // }
     extractedFeatures.push(feati);
   }
   const mergedFeatures: Array<number> = Array.prototype.concat.apply(
     [],
     extractedFeatures
   );
-  return mergedFeatures;
+  // console.log("!!!", extractedFeatures);
+  return extractedFeatures;
 };
 
 export const extractFeaturesTesting = (
@@ -130,5 +137,9 @@ export const extractFeaturesTesting = (
   if (features.includes(4)) {
     feati = [...feati, ...calculateDU(inputData)];
   }
+  // if (features.includes(5)) {
+  //TODO
+  // feati = [...feati, ...calculateDU(inputData)];
+  // }
   return feati;
 };

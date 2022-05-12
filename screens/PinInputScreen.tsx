@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { GestureEvent } from "react-native-gesture-handler";
 import { RootStackParamList } from "../App";
 import { authenticate1 } from "../calculations/classifiers";
 import PinCircle from "../components/PinCircle";
@@ -229,6 +230,7 @@ export default function PinInputScreen({ route, navigation }: Props) {
     key: string,
     pressEventType: PressEventType
   ): KeyPressData => {
+    console.log("PRESSURE: ", e.nativeEvent.force);
     return {
       id: inputData.data?.length || 0,
       key: key,
@@ -236,9 +238,10 @@ export default function PinInputScreen({ route, navigation }: Props) {
       timeStamp: e.timeStamp,
       pageX: e.nativeEvent.pageX,
       pageY: e.nativeEvent.pageY,
+      pressure: e.nativeEvent.force || 0,
       locationX: e.nativeEvent.locationX,
       locationY: e.nativeEvent.locationY,
-      gyroscode: { x: 0, y: 0, z: 0 },
+      gyroscode: { x: 0, y: 0, z: 0 }, //TODO
     };
   };
 

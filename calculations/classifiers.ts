@@ -4,28 +4,54 @@ import { Combination, InputData } from "../state/testers_slice";
 import { extractFeatures, extractFeaturesTesting } from "./featureExtractors";
 
 // for building classifier
-const getMean = (mergedFeatures: Array<number>) => {
-  const sum = mergedFeatures.reduce((a, b) => a + b, 0);
+const getMeans = (extractedFeatures: Array<Array<number>>) => {
+  const meansArray: Array<number> = [];
 
-  const mean = sum / mergedFeatures.length;
-  return mean;
+  for (let i = 0; i < extractedFeatures[0].length; i++) {
+    let sameFeatureDiferentSteps = [];
+    for (let j = 0; j < extractedFeatures.length; j++) {
+      sameFeatureDiferentSteps.push(extractedFeatures[j][i]);
+    }
+    // calculate mean
+    const sum = sameFeatureDiferentSteps.reduce((a, b) => a + b, 0);
+    const mean = sum / extractedFeatures.length;
+    meansArray.push(mean);
+  }
+  return meansArray;
 };
 
-const getMeanAbsoluteDeviation = (mean: number, values: Array<number>) => {
-  const sum = values.reduce((a, b) => a + Math.abs(b - mean), 0);
+const getMeanAbsoluteDeviations = (
+  means: Array<number>,
+  extractedFeatures: Array<Array<number>>
+) => {
+  const deviationsArray: Array<number> = [];
 
-  const meanAbsoluteDeviation = sum / values.length;
-  return meanAbsoluteDeviation;
+  for (let i = 0; i < extractedFeatures[0].length; i++) {
+    let sameFeatureDiferentSteps = [];
+    for (let j = 0; j < extractedFeatures.length; j++) {
+      sameFeatureDiferentSteps.push(extractedFeatures[j][i]);
+    }
+    // calculate deviation
+    const sum = sameFeatureDiferentSteps.reduce(
+      (a, b) => a + Math.abs(b - means[i]),
+      0
+    );
+    const meanAbsoluteDeviation = sum / extractedFeatures.length;
+    deviationsArray.push(meanAbsoluteDeviation);
+  }
+
+  return deviationsArray;
 };
 
 // for authentication
 const getAverageDistance = (
-  mean: number,
-  absoluteDeviation: number,
+  means: Array<number>,
+  absoluteDeviations: Array<number>,
   valuesToAuthenticate: Array<number>
 ) => {
   const sum = valuesToAuthenticate.reduce(
-    (a, b) => a + Math.abs(b - mean) / absoluteDeviation,
+    (a, b, currentIndex) =>
+      a + Math.abs(b - means[currentIndex]) / absoluteDeviations[currentIndex],
     0
   );
 
@@ -39,13 +65,16 @@ export const authenticate1 = (
   inputData: InputData,
   threshold: number
 ) => {
-  const features = extractFeatures(combination);
-  const mean = getMean(features);
-  const meanAbsoluteDeviation = getMeanAbsoluteDeviation(mean, features);
+  const features = extractFeatures(combination); //array.length ik-2
+  console.log("features", features);
+  const means = getMeans(features);
+  console.log("means", means);
+  const meanAbsoluteDeviations = getMeanAbsoluteDeviations(means, features);
+  console.log("meanAbsoluteDeviations", meanAbsoluteDeviations);
 
   const averageDistance = getAverageDistance(
-    mean,
-    meanAbsoluteDeviation,
+    means,
+    meanAbsoluteDeviations,
     extractFeaturesTesting(inputData, combination.features)
   );
 

@@ -27,6 +27,9 @@ export default function CombinationScreen({ route, navigation }: Props) {
     (c) => c.id === route.params.combinationId
   );
 
+  const features = useAppSelector((state) => state.features);
+  const classifiers = useAppSelector((state) => state.classifiers);
+
   const handleTestGenuine = () => {
     navigation.navigate("PinInput", {
       testerId: route.params.tester.id,
@@ -72,6 +75,9 @@ export default function CombinationScreen({ route, navigation }: Props) {
 
       <ScrollView style={styles.list}>
         <Text style={[styles.greyText, { marginVertical: 4 }]}>
+          Passcode: {combination?.pinCode}
+        </Text>
+        <Text style={[styles.greyText, { marginVertical: 4 }]}>
           Passcode length: {combination?.pinLength}
         </Text>
 
@@ -80,11 +86,15 @@ export default function CombinationScreen({ route, navigation }: Props) {
         </Text>
 
         <Text style={[styles.greyText, { marginVertical: 4 }]}>
-          Classifier: {combination?.classificator}
+          Classifier:{" "}
+          {classifiers.find((c) => c.id === combination?.classificator)?.short}
         </Text>
 
         <Text style={[styles.greyText, { marginVertical: 4 }]}>
-          Features: {combination?.features.toString()}
+          Features:{" "}
+          {combination?.features.map(
+            (f) => features.find((ft) => ft.id === f)?.short + " "
+          )}
         </Text>
 
         <View
@@ -92,9 +102,15 @@ export default function CombinationScreen({ route, navigation }: Props) {
             flexDirection: "row",
           }}
         >
-          <Text style={[styles.greyText, { marginVertical: 4 }]}>EER: ?%</Text>
-          <Text style={[styles.greyText, { marginVertical: 4 }]}>FAR: ?%</Text>
-          <Text style={[styles.greyText, { marginVertical: 4 }]}>FRR: ?%</Text>
+          <Text style={[styles.greyText, { marginVertical: 4 }]}>
+            EER: {combination?.EER || "?"}%
+          </Text>
+          <Text style={[styles.greyText, { marginVertical: 4 }]}>
+            FAR: {combination?.FAR || "?"}%
+          </Text>
+          <Text style={[styles.greyText, { marginVertical: 4 }]}>
+            FRR: {combination?.FRR || "?"}%
+          </Text>
         </View>
 
         <Text style={[styles.text]}>Tests:</Text>
