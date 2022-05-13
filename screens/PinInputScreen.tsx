@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { GestureEvent } from "react-native-gesture-handler";
 import { RootStackParamList } from "../App";
 import { authenticate1 } from "../calculations/classifiers";
 import PinCircle from "../components/PinCircle";
@@ -51,6 +50,12 @@ export default function PinInputScreen({ route, navigation }: Props) {
   const combination = tester?.combinations.find(
     (c) => c.id === route.params.combinationId
   );
+  const pinCircleSize =
+    combination?.pinLength && combination?.pinLength > 12
+      ? "small"
+      : combination?.pinLength && combination?.pinLength > 8
+      ? "medium"
+      : "large";
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [error, setError] = React.useState(false);
@@ -268,7 +273,15 @@ export default function PinInputScreen({ route, navigation }: Props) {
             <PinCircle
               key={index}
               filled={value !== ""}
-              style={{ marginHorizontal: 4 }}
+              style={{
+                marginHorizontal:
+                  pinCircleSize === "large"
+                    ? 4
+                    : pinCircleSize === "medium"
+                    ? 2
+                    : 1,
+              }}
+              size={pinCircleSize}
             />
           ))}
         </View>

@@ -1,5 +1,5 @@
 import React from "react";
-import { SafeAreaView, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import AddCombinationScreen from "./screens/AddCombinationScreen";
 import CombinationScreen from "./screens/CombinationScreen";
 import PinInputScreen, { PhaseType } from "./screens/PinInputScreen";
@@ -87,25 +87,3 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-const state = {
-  testers: [
-    {
-      username: "aa",
-      age: 23,
-      dateRegistered: "",
-      combinations: [
-        {
-          title: "combination 1",
-          classificator: "",
-          features: [],
-          pinLength: 8,
-          genuineTests: [],
-          impostorTests: [],
-        },
-      ],
-    },
-  ],
-  features: [],
-  classificators: [],
-};

@@ -66,11 +66,8 @@ export const authenticate1 = (
   threshold: number
 ) => {
   const features = extractFeatures(combination); //array.length ik-2
-  console.log("features", features);
   const means = getMeans(features);
-  console.log("means", means);
   const meanAbsoluteDeviations = getMeanAbsoluteDeviations(means, features);
-  console.log("meanAbsoluteDeviations", meanAbsoluteDeviations);
 
   const averageDistance = getAverageDistance(
     means,
@@ -78,7 +75,49 @@ export const authenticate1 = (
     extractFeaturesTesting(inputData, combination.features)
   );
 
-  console.log("DISTANCE: ", averageDistance);
-
   return averageDistance <= threshold;
+};
+
+// 2. Hits factor, deviation ratio and feature fusion (Sudhir Dhage, Pranav Kundra and others)
+
+// For calculating mean - getMeans function is reused
+
+const getStandartDeviations = (
+  means: Array<number>,
+  extractedFeatures: Array<Array<number>>
+) => {
+  const deviationsArray: Array<number> = [];
+
+  for (let i = 0; i < extractedFeatures[0].length; i++) {
+    let sameFeatureDiferentSteps = [];
+    for (let j = 0; j < extractedFeatures.length; j++) {
+      sameFeatureDiferentSteps.push(extractedFeatures[j][i]);
+    }
+    // calculate standart deviation
+    const sum = sameFeatureDiferentSteps.reduce(
+      (a, b) => a + Math.pow(b - means[i], 2),
+      0
+    );
+    const meanAbsoluteDeviation = Math.sqrt(
+      sum / (extractedFeatures.length - 1)
+    );
+    deviationsArray.push(meanAbsoluteDeviation);
+  }
+
+  return deviationsArray;
+};
+
+// Factor 1 - hits factor
+const getRangeLimits = (
+  means: Array<number>,
+  standartDeviations: Array<number>,
+  threshold: number
+) => {
+  const upperLimits = [];
+  const lowerLimits = [];
+  for (let i = 0; i < means.length; i++) {
+    upperLimits.push(means[i] + threshold * standartDeviations[i]);
+    lowerLimits.push(means[i] - threshold * standartDeviations[i]);
+  }
+  return { upperLimmits: upperLimits, lowerLimmits: lowerLimits };
 };

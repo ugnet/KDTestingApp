@@ -22,8 +22,12 @@ export const calculateMetrics = (combination: Combination) => {
     (genuineInputsWhenAuthenticatedAsImpostor / genuineTotalInputs) * 100;
   // EER ???? ar gera implementacija???
   const errors = combination.tests.filter(
-    (t) => t.authentication === "fail"
+    (t) => t.authentication === "success"
   ).length;
-  const ERR = (errors / combination.tests.length) * 100;
-  return { FAR: FAR, FRR: FRR, ERR: ERR };
+  const accuracy = (errors / combination.tests.length) * 100;
+  return {
+    FAR: FAR.toFixed(1),
+    FRR: FRR.toFixed(1),
+    Accuracy: accuracy.toFixed(1),
+  };
 };

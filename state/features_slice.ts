@@ -31,7 +31,11 @@ const initialState: Features = [
     title: "Down–up time (DU)",
     short: "DU",
   },
-  { id: 5, title: "Press pressure", short: "P" },
+  {
+    id: 5,
+    title: "Press pressure (on iOS that support 3d touch)",
+    short: "P",
+  },
 ];
 
 const featuresSlice = createSlice({

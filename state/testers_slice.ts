@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import CombinationScreen from "../screens/CombinationScreen";
 
 export interface Feature {
   name: string;
@@ -29,7 +28,6 @@ export interface Combination {
   numberOfTrainingSteps: number;
   trainingData: Array<InputData>; //TODO
   tests: Array<Test>;
-  // impostorTests: Array<Test>;
   FAR?: number;
   FRR?: number;
   EER?: number;
@@ -45,7 +43,6 @@ export interface Tester {
 
 export interface Testers extends Array<Tester> {}
 
-// INPUT
 export type PressEventType = "pressIn" | "pressOut" | "press";
 
 export type InputPurpose = "training" | "testing";
