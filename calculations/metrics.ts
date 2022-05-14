@@ -1,7 +1,7 @@
 import { Combination } from "../state/testers_slice";
 
 export const calculateMetrics = (combination: Combination) => {
-  if (!combination) return { FAR: 0, FRR: 0, ERR: 0 };
+  if (!combination) return { FAR: 0, FRR: 0, Accuracy: 0 };
   // FAR
   const imposterTotalInputs = combination.tests.filter(
     (test) => test.testedAs === "impostor"
@@ -20,7 +20,7 @@ export const calculateMetrics = (combination: Combination) => {
   ).length;
   const FRR =
     (genuineInputsWhenAuthenticatedAsImpostor / genuineTotalInputs) * 100;
-  // EER ???? ar gera implementacija???
+  // Accuracy
   const errors = combination.tests.filter(
     (t) => t.authentication === "success"
   ).length;

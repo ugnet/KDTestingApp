@@ -12,6 +12,7 @@ export const calculateDU = (inputData: InputData) => {
     const pressOut = inputData.data[i + 1];
     DU.push(pressOut.timeStamp - pressIn.timeStamp);
   }
+  console.log("DU", DU);
   return DU;
 };
 
@@ -27,6 +28,7 @@ export const calculateUD = (inputData: InputData) => {
       UD.push(pressIn.timeStamp - pressOut.timeStamp);
     }
   }
+  console.log("UD", UD);
   return UD;
 };
 
@@ -42,6 +44,7 @@ export const calculateDD = (inputData: InputData) => {
       DD.push(pressIn2.timeStamp - pressIn.timeStamp);
     }
   }
+  console.log("DD", DD);
   return DD;
 };
 
@@ -57,6 +60,7 @@ export const calculateUU = (inputData: InputData) => {
       UU.push(pressOut2.timeStamp - pressOut.timeStamp);
     }
   }
+  console.log("UU", UU);
   return UU;
 };
 
@@ -70,6 +74,7 @@ export const getPressures = (inputData: InputData) => {
       pressures.push(pressure);
     }
   }
+  console.log("pressures", pressures);
   return pressures;
 };
 

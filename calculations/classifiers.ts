@@ -121,3 +121,85 @@ const getRangeLimits = (
   }
   return { upperLimmits: upperLimits, lowerLimmits: lowerLimits };
 };
+
+//3. The Med-Min-Dif classifier. (N. M. Al-Obaidi and M. M. Al-Jarrah)
+
+// upper and lower limits
+
+// AUTHENTICATE: true = legitimate, false=impostor
+export const authenticate3 = (
+  combination: Combination,
+  testingData: InputData
+  // passMark: number
+) => {
+  console.log("3 authentikacija");
+  let score = 0;
+  const features = extractFeatures(combination); //array.length ik-2
+
+  const testingFeatures = extractFeaturesTesting(
+    testingData,
+    combination.features
+  );
+  const lowerThresholds = getLowerThresholds(features);
+  const upperThresholds = getUpperThresholds(features);
+
+  for (let i = 0; i < testingFeatures.length; i++) {
+    if (
+      testingFeatures[i] < upperThresholds[i] &&
+      testingFeatures[i] > lowerThresholds[i]
+    ) {
+      score += 1;
+    }
+  }
+
+  const passMark = testingFeatures.length / 1.4; //PASS MARK
+  console.log(passMark, score);
+  return score >= passMark ? true : false;
+};
+
+const getLowerThresholds = (features: number[][]) => {
+  const lowerThresholds = [];
+  for (let i = 0; i < features[0].length; i++) {
+    let sameFeatureDiferentSteps = [];
+    for (let j = 0; j < features.length; j++) {
+      sameFeatureDiferentSteps.push(features[j][i]);
+    }
+    lowerThresholds.push(Math.min(...sameFeatureDiferentSteps));
+  }
+  return lowerThresholds;
+};
+
+const getUpperThresholds = (
+  features: number[][],
+  constantFactor: number = 2
+) => {
+  const upperThresholds: Array<number> = [];
+
+  for (let i = 0; i < features[0].length; i++) {
+    let sameFeatureDiferentSteps = [];
+    for (let j = 0; j < features.length; j++) {
+      sameFeatureDiferentSteps.push(features[j][i]);
+    }
+    const median = getmedian(sameFeatureDiferentSteps);
+    const UDM =
+      (median - Math.min(...sameFeatureDiferentSteps)) * constantFactor;
+    const upperThreshold = median + UDM;
+
+    upperThresholds.push(upperThreshold);
+  }
+  return upperThresholds;
+};
+
+const getmedian = (values: Array<number>) => {
+  if (values.length === 0) throw new Error("No inputs");
+
+  values.sort(function (a, b) {
+    return a - b;
+  });
+
+  var half = Math.floor(values.length / 2);
+
+  if (values.length % 2) return values[half];
+
+  return (values[half - 1] + values[half]) / 2.0;
+};

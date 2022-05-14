@@ -29,8 +29,8 @@ const initialState: Classfiers = [
   },
   {
     id: 3,
-    title: "Statistical Median-Based Classifier () ",
-    short: "Statistical Median-Based Classifier (3)",
+    title: "The Med-Min-Dif classifier. (N. M. Al-Obaidi and M. M. Al-Jarrah) ",
+    short: "The Med-Min-Dif classifier.  (3)",
     type: "statistical",
   },
 ];
