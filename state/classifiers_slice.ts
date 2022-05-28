@@ -34,7 +34,7 @@ const initialState: Classfiers = [
     type: "statistical",
   },
   {
-    id: 4, //https://www.emerald.com/insight/content/doi/10.1108/IJPCC-01-2016-0005/full/html?casa_token=3RuM6H5cnjsAAAAA:S_RffkvwtrEL8VwRveSFCvDgIroEKsJ7VJ1MsC85DvWg_nU8q9u-yo2IElYCctIbYos4xuLqOjtSxxmYsEO0amYQppOu8ikyh99mNbhnSPMR3u_2
+    id: 4,
     title:
       "Gausian estimation similarity score. (P. S. Teh, N. Zhang, A. B. J. Teoh, Ke Chen) ",
     short: "Gausian estimation similarity score.  (4)",
