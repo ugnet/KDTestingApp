@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useState } from "react";
+import React from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -10,8 +10,7 @@ import {
   Image,
 } from "react-native";
 import { RootStackParamList } from "../App";
-
-import { useAppDispatch, useAppSelector } from "../state/hooks";
+import { useAppSelector } from "../state/hooks";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Testers">;
 
@@ -50,7 +49,7 @@ export default function TestersScreen({ navigation }: Props) {
             onPress={navigateToProfile(tester.id)}
           >
             <Image
-              source={require("../assets/Profile_1.png")}
+              source={require("../assets/profile_1.png")}
               style={styles.image}
             />
             <View>

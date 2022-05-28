@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -10,12 +10,7 @@ import {
   Image,
 } from "react-native";
 import { RootStackParamList } from "../App";
-import {
-  calculateDU,
-  calculateUD,
-  extractFeatures,
-} from "../calculations/featureExtractors";
-import RadioButton from "../components/RadioButton";
+import { calculateMetrics } from "../calculations/metrics";
 import { useAppSelector } from "../state/hooks";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Combination">;
@@ -26,6 +21,11 @@ export default function CombinationScreen({ route, navigation }: Props) {
   const combination = route.params.tester.combinations.find(
     (c) => c.id === route.params.combinationId
   );
+
+  const features = useAppSelector((state) => state.features);
+  const classifiers = useAppSelector((state) => state.classifiers);
+
+  const metrics = combination ? calculateMetrics(combination) : null;
 
   const handleTestGenuine = () => {
     navigation.navigate("PinInput", {
@@ -42,18 +42,6 @@ export default function CombinationScreen({ route, navigation }: Props) {
       phase: "testingImpostor",
     });
   };
-
-  useEffect(() => {
-    // CAlCULATE features if not yes calculated
-
-    if (combination?.trainingData.length) {
-      // calculate();
-      console.log("extractedFeatures", extractFeatures(combination));
-
-      console.log("DU", calculateDU(combination?.trainingData[0]));
-      console.log("UD", calculateUD(combination?.trainingData[0]));
-    }
-  }, [combination]);
 
   return (
     <>
@@ -72,6 +60,9 @@ export default function CombinationScreen({ route, navigation }: Props) {
 
       <ScrollView style={styles.list}>
         <Text style={[styles.greyText, { marginVertical: 4 }]}>
+          Passcode: {combination?.pinCode}
+        </Text>
+        <Text style={[styles.greyText, { marginVertical: 4 }]}>
           Passcode length: {combination?.pinLength}
         </Text>
 
@@ -79,22 +70,33 @@ export default function CombinationScreen({ route, navigation }: Props) {
           Training sessions: {combination?.numberOfTrainingSteps}
         </Text>
 
-        <Text style={[styles.greyText, { marginVertical: 4 }]}>
-          Classifier: {combination?.classificator}
+        <Text
+          style={[styles.greyText, { marginVertical: 4, textAlign: "left" }]}
+        >
+          Classifier:{" "}
+          {classifiers.find((c) => c.id === combination?.classificator)?.short}
         </Text>
 
         <Text style={[styles.greyText, { marginVertical: 4 }]}>
-          Features: {combination?.features.toString()}
+          Features:{" "}
+          {combination?.features.map(
+            (f) => features.find((ft) => ft.id === f)?.short + " "
+          )}
         </Text>
-
+        <Text style={[styles.greyText, { marginVertical: 4 }]}>
+          Accuracy: {metrics?.Accuracy || "?"}%
+        </Text>
         <View
           style={{
             flexDirection: "row",
           }}
         >
-          <Text style={[styles.greyText, { marginVertical: 4 }]}>EER: ?%</Text>
-          <Text style={[styles.greyText, { marginVertical: 4 }]}>FAR: ?%</Text>
-          <Text style={[styles.greyText, { marginVertical: 4 }]}>FRR: ?%</Text>
+          <Text style={[styles.greyText, { marginVertical: 4 }]}>
+            FAR: {metrics?.FAR || "?"}%
+          </Text>
+          <Text style={[styles.greyText, { marginVertical: 4 }]}>
+            FRR: {metrics?.FRR || "?"}%
+          </Text>
         </View>
 
         <Text style={[styles.text]}>Tests:</Text>
@@ -114,34 +116,13 @@ export default function CombinationScreen({ route, navigation }: Props) {
                 <Image
                   source={
                     test.authentication === "fail"
-                      ? require("../assets/Test_red.png")
-                      : require("../assets/Test_green.png")
+                      ? require("../assets/test_red.png")
+                      : require("../assets/test_green.png")
                   }
                   style={styles.image}
                 />
               </View>
             ))}
-            {/* {combination?.impostorTests.map((test) => (
-              <View style={styles.listItem}>
-                <View>
-                  <Text style={styles.text3}>Tested as: {test.testedAs}</Text>
-                  <Text style={[styles.text3, { marginVertical: 3 }]}>
-                    Authenticated as: {test.authenticateAs}
-                  </Text>
-                  <Text style={[styles.text3, { color: "#67718a" }]}>
-                    {test.authentication} ◦ {test.date} ◦ {test.id}
-                  </Text>
-                </View>
-                <Image
-                  source={
-                    test.authentication === "fail"
-                      ? require("../assets/Test_red.png")
-                      : require("../assets/Test_green.png")
-                  }
-                  style={styles.image}
-                />
-              </View>
-            ))} */}
           </>
         ) : (
           <Text style={[styles.greyText, { marginVertical: 4 }]}>

@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { RootStackParamList } from "../App";
-import { authenticate1 } from "../calculations/classifiers";
+import { authenticate1, authenticate3 } from "../calculations/classifiers";
 import PinCircle from "../components/PinCircle";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import {
@@ -50,6 +50,13 @@ export default function PinInputScreen({ route, navigation }: Props) {
   const combination = tester?.combinations.find(
     (c) => c.id === route.params.combinationId
   );
+
+  const pinCircleSize =
+    combination?.pinLength && combination?.pinLength > 12
+      ? "small"
+      : combination?.pinLength && combination?.pinLength > 8
+      ? "medium"
+      : "large";
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [error, setError] = React.useState(false);
@@ -173,7 +180,7 @@ export default function PinInputScreen({ route, navigation }: Props) {
               data: inputData,
             })
           );
-          console.log("inputData", inputData);
+          console.log("inputData<<<<<", inputData);
           if (trainingStep === combination.numberOfTrainingSteps) {
             navigation.pop(2);
           }
@@ -188,7 +195,17 @@ export default function PinInputScreen({ route, navigation }: Props) {
         } else {
           //TODO: ADD TEST
           // console.log("!!!!!!", inputData);
-          const isLegitimate = authenticate1(combination, inputData, THRESHOLD);
+          let isLegitimate: boolean;
+          switch (combination.classificator) {
+            case 1:
+              isLegitimate = authenticate1(combination, inputData, THRESHOLD);
+              break;
+            case 3:
+              isLegitimate = authenticate3(combination, inputData);
+              break;
+            default:
+              isLegitimate = false;
+          }
           dispatch(
             addTest({
               testerId: route.params.testerId,
@@ -229,6 +246,7 @@ export default function PinInputScreen({ route, navigation }: Props) {
     key: string,
     pressEventType: PressEventType
   ): KeyPressData => {
+    // console.log("PRESSURE: ", e.nativeEvent.force);
     return {
       id: inputData.data?.length || 0,
       key: key,
@@ -236,9 +254,10 @@ export default function PinInputScreen({ route, navigation }: Props) {
       timeStamp: e.timeStamp,
       pageX: e.nativeEvent.pageX,
       pageY: e.nativeEvent.pageY,
+      pressure: e.nativeEvent.force || 0,
       locationX: e.nativeEvent.locationX,
       locationY: e.nativeEvent.locationY,
-      gyroscode: { x: 0, y: 0, z: 0 },
+      gyroscode: { x: 0, y: 0, z: 0 }, //TODO
     };
   };
 
@@ -265,7 +284,15 @@ export default function PinInputScreen({ route, navigation }: Props) {
             <PinCircle
               key={index}
               filled={value !== ""}
-              style={{ marginHorizontal: 4 }}
+              style={{
+                marginHorizontal:
+                  pinCircleSize === "large"
+                    ? 4
+                    : pinCircleSize === "medium"
+                    ? 2
+                    : 1,
+              }}
+              size={pinCircleSize}
             />
           ))}
         </View>

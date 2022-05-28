@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import React, { useEffect } from "react";
+import React from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -37,9 +37,10 @@ export default function ProfileScreen({ route, navigation }: Props) {
   return (
     <>
       <SafeAreaView style={{ flex: 0, backgroundColor: "#67718a" }} />
+
       <View style={styles.profileContainer}>
         <Image
-          source={require("../assets/Profile_2.png")}
+          source={require("../assets/profile_2.png")}
           style={styles.image}
         />
         <Text style={styles.textWhite}>{tester?.username}</Text>
@@ -74,7 +75,7 @@ export default function ProfileScreen({ route, navigation }: Props) {
               onPress={showCombination(combination.id)}
             >
               <Image
-                source={require("../assets/Cube.png")}
+                source={require("../assets/cube.png")}
                 style={styles.cube}
               />
               <View>
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#eef1f7",
   },
   list: {
-    height: "60%",
+    height: "50%",
     width: "100%",
     backgroundColor: "#eef1f7",
   },

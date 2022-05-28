@@ -17,7 +17,20 @@ const initialState: Classfiers = [
     id: 1,
     title:
       "Computation efficient statistical classifier (Cheng-Jung Tasia, Ting-Yi Chang and others) ",
-    short: "Computation efficient statistical",
+    short: "Computation efficient statistical (1)",
+    type: "statistical",
+  },
+  {
+    id: 2,
+    title:
+      "Hits factor, deviation ratio and feature fusion (Sudhir Dhage, Pranav Kundra and others) ",
+    short: "Hits factor, deviation ratio and feature fusion (2)",
+    type: "statistical",
+  },
+  {
+    id: 3,
+    title: "The Med-Min-Dif classifier. (N. M. Al-Obaidi and M. M. Al-Jarrah) ",
+    short: "The Med-Min-Dif classifier.  (3)",
     type: "statistical",
   },
 ];

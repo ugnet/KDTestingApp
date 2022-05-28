@@ -53,8 +53,8 @@ export default function AddCombinationScreen({ route, navigation }: Props) {
       !featuresSelection.length ||
       parseInt(length) > 16 ||
       parseInt(length) < 4 ||
-      parseInt(steps) > 20 ||
-      parseInt(steps) < 6
+      parseInt(steps) > 10 ||
+      parseInt(steps) < 1
     )
       return setError(true);
 
@@ -138,7 +138,7 @@ export default function AddCombinationScreen({ route, navigation }: Props) {
         </Text>
         <TextInput
           style={styles.input}
-          placeholder="6-20"
+          placeholder="1-10"
           keyboardType="numeric"
           value={steps}
           onChangeText={setSteps}
