@@ -26,7 +26,7 @@ export interface Combination {
   pinLength: number;
   pinCode: string;
   numberOfTrainingSteps: number;
-  trainingData: Array<InputData>; //TODO
+  trainingData: Array<InputData>;
   tests: Array<Test>;
   FAR?: number;
   FRR?: number;
@@ -65,64 +65,21 @@ export interface InputData {
   data: Array<KeyPressData>;
 }
 
-const initialState: Testers = [
-  {
-    id: 1,
-    username: "tester 1",
-    age: "23",
-    gender: "M",
-    combinations: [
-      {
-        id: 1,
-        testerId: 1,
-        title: "combination 1",
-        classificator: 1,
-        features: [1, 2],
-        pinLength: 8,
-        pinCode: "44532347",
-        numberOfTrainingSteps: 7,
-        trainingData: [],
-        tests: [
-          {
-            testedAs: "genuine",
-            authenticateAs: "impostor",
-            authentication: "fail",
-            date: "2022-01-01",
-            id: 1,
-          },
-          {
-            testedAs: "impostor",
-            authenticateAs: "impostor",
-            authentication: "success",
-            date: "2022-01-01",
-            id: 2,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 2,
-    username: "tester 2",
-    age: "24",
-    gender: "F",
-    combinations: [],
-  },
-];
+const initialState: Testers = [];
 
 const testersSlice = createSlice({
   name: "testers",
   initialState,
   reducers: {
-    addTester(state, action: PayloadAction<Tester>) {
+    addTester(state: Testers, action: PayloadAction<Tester>) {
       state.push(action.payload);
     },
-    addCombination(state, action: PayloadAction<Combination>) {
+    addCombination(state: Testers, action: PayloadAction<Combination>) {
       state
-        .find((tester) => tester.id === action.payload.testerId)
+        .find((tester: Tester) => tester.id === action.payload.testerId)
         ?.combinations.push(action.payload);
     },
-    modifyCombinationPin(state, action: PayloadAction<Combination>) {
+    modifyCombinationPin(state: Testers, action: PayloadAction<Combination>) {
       const tester = state.find(
         (tester) => tester.id == action.payload.testerId
       );
@@ -136,7 +93,7 @@ const testersSlice = createSlice({
       }
     },
     addTrainingStepData(
-      state,
+      state: Testers,
       action: PayloadAction<{
         testerId: number;
         combinationId: number;
@@ -159,7 +116,7 @@ const testersSlice = createSlice({
       }
     },
     addTest(
-      state,
+      state: Testers,
       action: PayloadAction<{
         testerId: number;
         combinationId: number;

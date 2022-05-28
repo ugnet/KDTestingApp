@@ -1,9 +1,7 @@
-// 1. "Two novel biometric features in keystroke dynamics authentication systems for touch screen devices" [72]
-
 import { Combination, InputData } from "../state/testers_slice";
 import { extractFeatures, extractFeaturesTesting } from "./featureExtractors";
 
-// for building classifier
+// 1. "Two novel biometric features in keystroke dynamics authentication systems for touch screen devices" by Cheng-Jung Tasia, Ting-Yi Chang, Pei-Cheng Cheng and Jyun-Hao Lin
 const getMeans = (extractedFeatures: Array<Array<number>>) => {
   const meansArray: Array<number> = [];
 
@@ -12,7 +10,6 @@ const getMeans = (extractedFeatures: Array<Array<number>>) => {
     for (let j = 0; j < extractedFeatures.length; j++) {
       sameFeatureDiferentSteps.push(extractedFeatures[j][i]);
     }
-    // calculate mean
     const sum = sameFeatureDiferentSteps.reduce((a, b) => a + b, 0);
     const mean = sum / extractedFeatures.length;
     meansArray.push(mean);
@@ -31,7 +28,6 @@ const getMeanAbsoluteDeviations = (
     for (let j = 0; j < extractedFeatures.length; j++) {
       sameFeatureDiferentSteps.push(extractedFeatures[j][i]);
     }
-    // calculate deviation
     const sum = sameFeatureDiferentSteps.reduce(
       (a, b) => a + Math.abs(b - means[i]),
       0
@@ -43,7 +39,6 @@ const getMeanAbsoluteDeviations = (
   return deviationsArray;
 };
 
-// for authentication
 const getAverageDistance = (
   means: Array<number>,
   absoluteDeviations: Array<number>,
@@ -65,7 +60,7 @@ export const authenticate1 = (
   inputData: InputData,
   threshold: number
 ) => {
-  const features = extractFeatures(combination); //array.length ik-2
+  const features = extractFeatures(combination);
   const means = getMeans(features);
   const meanAbsoluteDeviations = getMeanAbsoluteDeviations(means, features);
 
@@ -79,8 +74,6 @@ export const authenticate1 = (
 };
 
 // 2. Hits factor, deviation ratio and feature fusion (Sudhir Dhage, Pranav Kundra and others)
-
-// For calculating mean - getMeans function is reused
 
 const getStandartDeviations = (
   means: Array<number>,
@@ -126,7 +119,7 @@ export const authenticate2 = (
   combination: Combination,
   testingData: InputData
 ) => {
-  const features = extractFeatures(combination); //array.length ik-2
+  const features = extractFeatures(combination);
   const testingFeatures = extractFeaturesTesting(
     testingData,
     combination.features
@@ -146,18 +139,15 @@ export const authenticate2 = (
   }
 };
 
-//3. The Med-Min-Dif classifier. (N. M. Al-Obaidi and M. M. Al-Jarrah)
-
-// upper and lower limits
+//3. The Med-Min-Dif classifier by N. M. Al-Obaidi and M. M. Al-Jarrah
 
 // AUTHENTICATE: true = legitimate, false=impostor
 export const authenticate3 = (
   combination: Combination,
   testingData: InputData
 ) => {
-  console.log("3 authentikacija");
   let score = 0;
-  const features = extractFeatures(combination); //array.length ik-2
+  const features = extractFeatures(combination);
 
   const testingFeatures = extractFeaturesTesting(
     testingData,
@@ -175,8 +165,7 @@ export const authenticate3 = (
     }
   }
 
-  const passMark = testingFeatures.length / 1.4; //PASS MARK
-  console.log(passMark, score);
+  const passMark = testingFeatures.length / 1.4;
   return score >= passMark ? true : false;
 };
 
@@ -228,14 +217,13 @@ const getmedian = (values: Array<number>) => {
   return (values[half - 1] + values[half]) / 2.0;
 };
 
-// 4. https://www.emerald.com/insight/content/doi/10.1108/IJPCC-01-2016-0005/full/html?casa_token=3RuM6H5cnjsAAAAA:S_RffkvwtrEL8VwRveSFCvDgIroEKsJ7VJ1MsC85DvWg_nU8q9u-yo2IElYCctIbYos4xuLqOjtSxxmYsEO0amYQppOu8ikyh99mNbhnSPMR3u_2
+// 4. "TDAS: a touch dynamics based multi-factor authentication solution for mobile devices" by Pin Shen Teh, Ning Zhang, Andrew Beng Jin Teoh, Ke Chen
 
 export const authenticate4 = (
   combination: Combination,
   testingData: InputData,
   threshold: number
 ) => {
-  console.log("4 authentikacija");
   const features = extractFeatures(combination); //array.length ik-2
   const testingFeatures = extractFeaturesTesting(
     testingData,
@@ -258,11 +246,10 @@ export const authenticate4 = (
   const sum = Di.reduce((partialSum, a) => partialSum + a, 0);
   const Dfinal = sum / Di.length;
 
-  console.log("Dfinal", Dfinal);
   return Dfinal >= 0.5 ? true : false;
 };
 
-// GAUSIAN ESTIMATION
+// Gaussian estimation
 const getSimilarityScores = (
   means: number[],
   deviations: number[],

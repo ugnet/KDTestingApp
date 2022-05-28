@@ -37,7 +37,6 @@ export default function PinInputScreen({ route, navigation }: Props) {
   const THRESHOLD = 2.7;
   const dispatch = useAppDispatch();
   const [phase, setPhase] = useState(route.params.phase);
-  // INPUT DATA:
   const inputDataInit: InputData = {
     input: "",
     purpose: phase === "training" ? "training" : "testing",
@@ -79,10 +78,8 @@ export default function PinInputScreen({ route, navigation }: Props) {
     pass[currentIndex] = key;
     setPasscode(pass);
     setError(false);
-    console.log("input");
     if (currentIndex + 1 === combination?.pinLength) {
       if (phase === "creatingPin") {
-        console.log("bb");
         // save pin
         dispatch(
           modifyCombinationPin({
@@ -171,12 +168,9 @@ export default function PinInputScreen({ route, navigation }: Props) {
   useEffect(() => {
     if (currentIndex === combination?.pinLength) {
       if (phase === "training") {
-        //TRAINING
         if (!validatePasscode(passcode.join(""))) {
           setError(true);
         } else {
-          // Save training step input data
-          console.log("training !!!");
           dispatch(
             addTrainingStepData({
               testerId: route.params.testerId,
@@ -184,7 +178,6 @@ export default function PinInputScreen({ route, navigation }: Props) {
               data: inputData,
             })
           );
-          console.log("inputData<<<<<", inputData);
           if (trainingStep === combination.numberOfTrainingSteps) {
             navigation.pop(2);
           }
@@ -197,8 +190,6 @@ export default function PinInputScreen({ route, navigation }: Props) {
         if (!validatePasscode(passcode.join(""))) {
           setError(true);
         } else {
-          //TODO: ADD TEST
-          // console.log("!!!!!!", inputData);
           let isLegitimate: boolean;
           switch (combination.classificator) {
             case 1:
@@ -253,7 +244,6 @@ export default function PinInputScreen({ route, navigation }: Props) {
     key: string,
     pressEventType: PressEventType
   ): KeyPressData => {
-    // console.log("PRESSURE: ", e.nativeEvent.force);
     return {
       id: inputData.data?.length || 0,
       key: key,
