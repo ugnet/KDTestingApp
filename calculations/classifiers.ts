@@ -122,6 +122,30 @@ const getRangeLimits = (
   return { upperLimmits: upperLimits, lowerLimmits: lowerLimits };
 };
 
+export const authenticate2 = (
+  combination: Combination,
+  testingData: InputData
+) => {
+  const features = extractFeatures(combination); //array.length ik-2
+  const testingFeatures = extractFeaturesTesting(
+    testingData,
+    combination.features
+  );
+  const means = getMeans(features);
+  const standartDeviations = getStandartDeviations(means, features);
+  const ranges = getRangeLimits(means, standartDeviations, 0.5);
+
+  let counter = 0;
+  for (let i = 0; i < testingFeatures.length; i++) {
+    if (
+      testingFeatures[i] > ranges.lowerLimmits[i] &&
+      testingFeatures[i] < ranges.upperLimmits[i]
+    ) {
+      counter += 1;
+    }
+  }
+};
+
 //3. The Med-Min-Dif classifier. (N. M. Al-Obaidi and M. M. Al-Jarrah)
 
 // upper and lower limits
@@ -130,7 +154,6 @@ const getRangeLimits = (
 export const authenticate3 = (
   combination: Combination,
   testingData: InputData
-  // passMark: number
 ) => {
   console.log("3 authentikacija");
   let score = 0;
@@ -159,6 +182,7 @@ export const authenticate3 = (
 
 const getLowerThresholds = (features: number[][]) => {
   const lowerThresholds = [];
+
   for (let i = 0; i < features[0].length; i++) {
     let sameFeatureDiferentSteps = [];
     for (let j = 0; j < features.length; j++) {
@@ -202,4 +226,57 @@ const getmedian = (values: Array<number>) => {
   if (values.length % 2) return values[half];
 
   return (values[half - 1] + values[half]) / 2.0;
+};
+
+// 4. https://www.emerald.com/insight/content/doi/10.1108/IJPCC-01-2016-0005/full/html?casa_token=3RuM6H5cnjsAAAAA:S_RffkvwtrEL8VwRveSFCvDgIroEKsJ7VJ1MsC85DvWg_nU8q9u-yo2IElYCctIbYos4xuLqOjtSxxmYsEO0amYQppOu8ikyh99mNbhnSPMR3u_2
+
+export const authenticate4 = (
+  combination: Combination,
+  testingData: InputData,
+  threshold: number
+) => {
+  console.log("4 authentikacija");
+  const features = extractFeatures(combination); //array.length ik-2
+  const testingFeatures = extractFeaturesTesting(
+    testingData,
+    combination.features
+  );
+  const means = getMeans(features);
+  const standartDeviations = getStandartDeviations(means, features);
+
+  const scores = getSimilarityScores(
+    means,
+    standartDeviations,
+    testingFeatures
+  );
+
+  const Di = [];
+  for (let i = 0; i < scores.length; i++) {
+    Di.push(scores[i] > threshold ? 1 : 0);
+  }
+
+  const sum = Di.reduce((partialSum, a) => partialSum + a, 0);
+  const Dfinal = sum / Di.length;
+
+  console.log("Dfinal", Dfinal);
+  return Dfinal >= 0.5 ? true : false;
+};
+
+// GAUSIAN ESTIMATION
+const getSimilarityScores = (
+  means: number[],
+  deviations: number[],
+  testFeatures: number[]
+) => {
+  const similarityScores = [];
+  for (let i = 0; i < testFeatures.length; i++) {
+    const a = -(
+      Math.pow(testFeatures[i] - means[i], 2) /
+      (2 * Math.pow(deviations[i], 2))
+    );
+    const score = Math.exp(a);
+
+    similarityScores.push(score);
+  }
+  return similarityScores;
 };

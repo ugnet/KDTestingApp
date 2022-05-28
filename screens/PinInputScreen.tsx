@@ -9,7 +9,11 @@ import {
   View,
 } from "react-native";
 import { RootStackParamList } from "../App";
-import { authenticate1, authenticate3 } from "../calculations/classifiers";
+import {
+  authenticate1,
+  authenticate3,
+  authenticate4,
+} from "../calculations/classifiers";
 import PinCircle from "../components/PinCircle";
 import { useAppDispatch, useAppSelector } from "../state/hooks";
 import {
@@ -202,6 +206,9 @@ export default function PinInputScreen({ route, navigation }: Props) {
               break;
             case 3:
               isLegitimate = authenticate3(combination, inputData);
+              break;
+            case 4:
+              isLegitimate = authenticate4(combination, inputData, 0.8);
               break;
             default:
               isLegitimate = false;
